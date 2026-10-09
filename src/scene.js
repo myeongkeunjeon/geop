@@ -18,7 +18,7 @@ function svgFor(era, wall) {
   const hs = hotspotsFor(era, wall, state.flags)
     .map((h) => `<rect class="hs" data-hs="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}"/>`)
     .join('');
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${art}${hs}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${art}${hs}</svg>`;
 }
 
 // anim: 'next' | 'prev' | 'fade' | undefined(즉시)

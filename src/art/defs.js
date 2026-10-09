@@ -68,12 +68,12 @@ const defs = /* svg */ `
   </pattern>
 
   <linearGradient id="floorShade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#000" stop-opacity=".35"/>
-    <stop offset=".25" stop-color="#000" stop-opacity=".05"/>
-    <stop offset="1" stop-color="#000" stop-opacity=".55"/>
+    <stop offset="0" stop-color="#000" stop-opacity=".3"/>
+    <stop offset=".3" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity=".35"/>
   </linearGradient>
   <linearGradient id="ceilShade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#000" stop-opacity=".6"/>
+    <stop offset="0" stop-color="#000" stop-opacity=".38"/>
     <stop offset="1" stop-color="#000" stop-opacity="0"/>
   </linearGradient>
   <linearGradient id="cornerR" x1="0" y1="0" x2="1" y2="0">
@@ -84,11 +84,65 @@ const defs = /* svg */ `
     <stop offset="0" stop-color="#000" stop-opacity="0"/>
     <stop offset="1" stop-color="#000" stop-opacity=".5"/>
   </linearGradient>
-  <radialGradient id="vignette" cx=".5" cy=".42" r=".72">
-    <stop offset=".38" stop-color="#000" stop-opacity="0"/>
-    <stop offset=".8" stop-color="#000" stop-opacity=".55"/>
-    <stop offset="1" stop-color="#000" stop-opacity=".9"/>
+  <radialGradient id="vignette" cx=".5" cy=".42" r=".75">
+    <stop offset=".5" stop-color="#000" stop-opacity="0"/>
+    <stop offset=".85" stop-color="#000" stop-opacity=".28"/>
+    <stop offset="1" stop-color="#000" stop-opacity=".6"/>
   </radialGradient>
+  <!-- 천장 형광등 한 점에서 퍼지는 빛 -->
+  <radialGradient id="bulb" cx=".5" cy=".12" r=".75">
+    <stop offset="0" stop-color="#fbf6e6" stop-opacity=".16"/>
+    <stop offset=".55" stop-color="#fbf6e6" stop-opacity=".05"/>
+    <stop offset="1" stop-color="#fbf6e6" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#3f4b45"/>
+    <stop offset=".5" stop-color="#55635b"/>
+    <stop offset="1" stop-color="#3a453f"/>
+  </linearGradient>
+  <linearGradient id="enamel" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#b9b5a9"/>
+    <stop offset=".35" stop-color="#d6d2c6"/>
+    <stop offset="1" stop-color="#a29e92"/>
+  </linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#86735a"/>
+    <stop offset="1" stop-color="#6b5b46"/>
+  </linearGradient>
+  <linearGradient id="nightGlass" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#1a2224"/>
+    <stop offset="1" stop-color="#0b1012"/>
+  </linearGradient>
+  <linearGradient id="rust" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5a4128" stop-opacity=".7"/>
+    <stop offset="1" stop-color="#5a4128" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="doorLight" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#e8c97a" stop-opacity="0"/>
+    <stop offset=".1" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset=".3" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset=".31" stop-color="#e8c97a" stop-opacity="0"/>
+    <stop offset=".44" stop-color="#e8c97a" stop-opacity="0"/>
+    <stop offset=".45" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset=".54" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset=".55" stop-color="#e8c97a" stop-opacity="0"/>
+    <stop offset=".68" stop-color="#e8c97a" stop-opacity="0"/>
+    <stop offset=".69" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset=".9" stop-color="#e8c97a" stop-opacity=".9"/>
+    <stop offset="1" stop-color="#e8c97a" stop-opacity="0"/>
+  </linearGradient>
+  <pattern id="pTile" width="18" height="18" patternUnits="userSpaceOnUse">
+    <rect width="18" height="18" fill="#7d8079"/>
+    <rect x="1" y="1" width="16" height="16" fill="#cdcbc2"/>
+  </pattern>
+  <pattern id="pEntry" width="40" height="40" patternUnits="userSpaceOnUse">
+    <rect width="40" height="40" fill="#3c3a36"/>
+    <rect x="1" y="1" width="38" height="38" fill="#5a5750"/>
+  </pattern>
+  <pattern id="pBrick" width="36" height="18" patternUnits="userSpaceOnUse">
+    <rect width="36" height="18" fill="#2a2524"/>
+    <path d="M0 .5H36M0 9.5H36M.5 0V9M18.5 9V18" stroke="#121010" stroke-width="1"/>
+  </pattern>
   <linearGradient id="rot" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#2b1f14" stop-opacity="0"/>
     <stop offset=".45" stop-color="#2b1f14" stop-opacity=".75"/>
@@ -104,6 +158,23 @@ const defs = /* svg */ `
     <stop offset="1" stop-color="#8f8b82"/>
   </linearGradient>
 
+  <!-- 오래 묵은 벽의 얼룩덜룩한 때 -->
+  <filter id="grime" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".011 .018" numOctaves="4" seed="9"/>
+    <feColorMatrix values="0 0 0 0 .30  0 0 0 0 .27  0 0 0 0 .19  3.2 0 0 0 -1.45"/>
+  </filter>
+  <filter id="grime2" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".035 .06" numOctaves="3" seed="27"/>
+    <feColorMatrix values="0 0 0 0 .22  0 0 0 0 .24  0 0 0 0 .2  3 0 0 0 -1.6"/>
+  </filter>
+  <linearGradient id="scuff" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4a3f2e" stop-opacity="0"/>
+    <stop offset="1" stop-color="#4a3f2e" stop-opacity=".38"/>
+  </linearGradient>
+  <linearGradient id="mattressTop" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#958e7e"/>
+    <stop offset="1" stop-color="#7c7566"/>
+  </linearGradient>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

@@ -15,13 +15,23 @@ const card = $('card');
 
 let selected = null; // 선택된 소지품 id (저장하지 않음)
 
-/* ---------- 화면 맞추기: 390×844를 안전 영역 안에 비율 유지로 ---------- */
+/* ---------- 화면 맞추기 ----------
+   폭 390 기준으로 안전 영역(노치·홈 표시줄 제외)을 꽉 채운다. 아이폰 15(393×759)면 장면이 약 555.
+   장면 그림은 390×600을 가운데 기준으로 채우고(위아래 조금 잘림), 장면이 너무 낮아지거나 높아지면
+   그때만 좌우·위아래에 여백을 둔다. */
+const FIXED = 50 + 44 + 104; // 상단 + 자막 + 소지품
+const SCENE_MIN = 520;
+const SCENE_MAX = 640;
 function fit() {
   const frame = $('frame');
   const cs = getComputedStyle(frame);
   const w = frame.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
   const h = frame.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-  stage.style.setProperty('--scale', Math.min(w / 390, h / 844));
+  let scale = w / 390;
+  if (h / scale < FIXED + SCENE_MIN) scale = h / (FIXED + SCENE_MIN);
+  const stageH = Math.min(h / scale, FIXED + SCENE_MAX);
+  stage.style.setProperty('--scale', scale);
+  stage.style.setProperty('--h', `${stageH}px`);
 }
 addEventListener('resize', fit);
 addEventListener('orientationchange', () => setTimeout(fit, 200));

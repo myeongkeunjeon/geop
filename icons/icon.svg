@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0e0e11"/>
+  <g transform="translate(56 56)">
+    <rect width="400" height="400" fill="#d4d2ca"/>
+    <g fill="#bdbbb3" opacity=".5"><rect x="40" width="2" height="400"/><rect x="100" width="2" height="400"/><rect x="160" width="2" height="400"/><rect x="220" width="2" height="400"/></g>
+    <polygon points="400,0 160,0 150,40 176,96 150,150 196,214 238,250 300,262 360,300 400,330" fill="#f1eee6"/>
+    <polygon points="400,0 172,0 166,40 188,92 166,148 206,206 246,240 306,252 364,288 400,312" fill="#8fb0bf"/>
+    <polygon points="400,0 228,0 222,42 240,96 232,146 266,190 318,214 400,238" fill="#7a5a3c"/>
+    <polygon points="400,0 282,0 280,40 294,92 300,132 340,156 400,166" fill="#d8c9a3"/>
+    <polygon points="400,0 334,0 336,34 344,72 372,96 400,100" fill="#8a8883"/>
+    <circle cx="214" cy="120" r="9" fill="#e9eef0" opacity=".85"/>
+    <circle cx="316" cy="70" r="7" fill="#b4544a"/>
+    <path d="M380 100c-4 70 6 140 0 240" stroke="#3f2219" stroke-width="7" fill="none" stroke-linecap="round" opacity=".75"/>
+  </g>
+  <rect width="512" height="512" fill="url(#v)"/>
+  <defs><radialGradient id="v" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient></defs>
+</svg>

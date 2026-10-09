@@ -6,6 +6,8 @@ import { draw2026 } from './art/2026.js';
 import { W, H, shell, wallTag } from './art/common.js';
 import { lamp, motes } from './art/fx.js';
 import { roomShell, roomFront, backTransform } from './art/room.js';
+import { torchSvg, aimTorch } from './torch.js';
+import { mountPeel, capturePeel } from './peel.js';
 
 const drawers = { 2026: draw2026 };
 
@@ -23,13 +25,11 @@ function partsFor(era, wall) {
     .map((h) => `<rect class="hs" data-hs="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}"/>`)
     .join('');
   const open = (cls) => `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" class="${cls}">`;
-  // 정전: 2단계에서 손전등 원형 마스크로 바뀐다
-  const top = dark
-    ? `<rect width="${W}" height="${H}" fill="#000" opacity=".82"/>`
-    : `${lamp()}${motes(wall.charCodeAt(0))}`;
+  // 정전: 화면은 거의 검고 손전등 빛만 남는다
+  const top = dark ? torchSvg() : `${lamp()}${motes(wall.charCodeAt(0))}`;
   return {
     art: `${open('art')}${roomShell(era)}<g transform="${backTransform}">${art}</g>${roomFront()}</svg>`,
-    fx: `${open('fx')}<g transform="${backTransform}">${fx}</g>${top}<g transform="${backTransform}">${after}</g></svg>`,
+    fx: `${open('fx')}<g class="wall-fx" transform="${backTransform}">${fx}</g>${top}<g transform="${backTransform}">${after}</g></svg>`,
     hit: `${open('hit')}<g transform="${backTransform}">${hs}</g></svg>`,
   };
 }
@@ -56,6 +56,7 @@ function buildLayer(parts) {
   el.className = 'layer';
   for (const k of ['art', 'fx', 'hit']) el.append(toNode(parts[k]));
   syncClock(el.querySelector('.fx'));
+  mountPeel(el);
   return el;
 }
 
@@ -73,6 +74,7 @@ export function renderScene(anim) {
       old.replaceWith(n);
       if (k === 'fx') syncClock(n);
     }
+    mountPeel(cur);
     return;
   }
 
@@ -97,20 +99,18 @@ export function hotspotEl(id) {
   return layers.querySelector(`.layer:not(.leaving) [data-hs="${id}"]`);
 }
 
-export function pulse(id) {
-  const el = hotspotEl(id);
-  if (!el) return;
-  el.classList.remove('pulse');
-  void el.getBoundingClientRect();
-  el.classList.add('pulse');
-}
-
 // 탭과 스와이프 구분. 화살표 버튼은 따로 처리
 export function bindScene({ onHotspot, onEmpty, onTurn }) {
   let start = null;
 
   sceneEl.addEventListener('pointerdown', (e) => {
     if (e.target.closest('.turn')) return;
+    aimTorch(e.clientX, e.clientY);
+    // 벽지 뜯기가 손가락을 가져가면 탭·스와이프로 처리하지 않는다
+    if (capturePeel(e)) {
+      start = null;
+      return;
+    }
     start = { x: e.clientX, y: e.clientY, target: e.target, id: e.pointerId };
   });
 

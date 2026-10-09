@@ -7,6 +7,7 @@
 //   gives    얻는 아이템   takes 잃는 아이템   sets 켜는 플래그
 //   text     text.js lines 키
 //   then     이어서 일어날 이벤트 (main.js events)
+//   solve    푼 퍼즐 번호 (통계: 처음 푼 시각)
 
 const era = (e, rules) => rules.map((r) => ({ era: e, use: null, requires: [], forbids: [], gives: [], takes: [], sets: [], ...r }));
 
@@ -21,12 +22,12 @@ export const actions = [
     { target: 'bag', forbids: ['gotBag'], gives: ['bag'], sets: ['gotBag'], text: 'bag_get' },
 
     // 귀퉁이
-    { target: 'box', use: 'cutter', forbids: ['boxOpen'], gives: ['flashlight'], sets: ['boxOpen'], text: 'box_open', then: 'blackout' },
+    { target: 'box', use: 'cutter', forbids: ['boxOpen'], gives: ['flashlight'], sets: ['boxOpen'], text: 'box_open', then: 'blackout', solve: 'P1' },
     { target: 'box', forbids: ['boxOpen'], text: 'box_look' },
     { target: 'box', text: 'box_empty' },
     { target: 'corner', use: 'cutter', forbids: ['cornerWet'], text: 'wont_budge' },
-    { target: 'corner', use: 'spray', requires: ['blackout'], forbids: ['cornerWet'], sets: ['cornerWet'], text: 'corner_wet' },
-    { target: 'corner', use: 'cutter', requires: ['cornerWet'], text: 'corner_lift', then: 'peel' },
+    { target: 'corner', use: 'spray', requires: ['blackout'], forbids: ['cornerWet'], sets: ['cornerWet'], text: 'corner_wet', then: 'spray' },
+    { target: 'corner', use: 'cutter', requires: ['cornerWet'], forbids: ['peelReady'], text: 'corner_lift', then: 'peel' },
     { target: 'corner', requires: ['cornerWet'], text: 'corner_wet_look' },
     { target: 'corner', requires: ['blackout'], text: 'corner_look_dark' },
     { target: 'corner', text: 'corner_look' },
@@ -40,7 +41,7 @@ export const actions = [
 
     // 부엌
     { target: 'fridge', text: 'fridge' },
-    { target: 'sink', use: 'flashlight', requires: ['blackout'], forbids: ['gotSpray'], gives: ['spray'], sets: ['gotSpray'], text: 'sink_spray' },
+    { target: 'sink', use: 'flashlight', requires: ['blackout'], forbids: ['gotSpray'], gives: ['spray'], sets: ['gotSpray'], text: 'sink_spray', then: 'fillWater', solve: 'P2' },
     { target: 'sink', requires: ['gotSpray'], text: 'sink_after' },
     { target: 'sink', requires: ['blackout'], text: 'sink_dark2' },
     { target: 'sink', text: 'sink_dark' },

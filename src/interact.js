@@ -16,11 +16,16 @@ function matches(rule, target, use) {
 //   { text, gained: [아이템], then } 또는 맞는 규칙이 없으면 { text: 'use_nothing' }
 export function act(target, use = null) {
   const rule = actions.find((r) => matches(r, target, use));
-  if (!rule) return { text: use ? 'use_nothing' : null, gained: [], then: null };
+  if (!rule) {
+    if (use) state.stats.wrong[target] = (state.stats.wrong[target] || 0) + 1;
+    return { text: use ? 'use_nothing' : null, gained: [], then: null };
+  }
+  if (rule.text === 'wont_budge') state.stats.wrong[target] = (state.stats.wrong[target] || 0) + 1;
 
   rule.takes.forEach(removeItem);
   const gained = rule.gives.filter((id) => !hasItem(id));
   gained.forEach(addItem);
   rule.sets.forEach((f) => setFlag(f));
+  if (rule.solve) state.stats.solved[rule.solve] ??= Date.now();
   return { text: rule.text, gained, then: rule.then || null };
 }

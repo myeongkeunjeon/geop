@@ -204,6 +204,18 @@ const defs = /* svg */ `
     <stop offset="0" stop-color="#000" stop-opacity=".45"/>
     <stop offset="1" stop-color="#000" stop-opacity=".6"/>
   </linearGradient>
+  <!-- 손전등 (torch.js): 가면에서 검정 = 빛이 닿는 곳 -->
+  <radialGradient id="torchHole" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#000"/>
+    <stop offset=".55" stop-color="#000"/>
+    <stop offset=".8" stop-color="#555"/>
+    <stop offset="1" stop-color="#fff"/>
+  </radialGradient>
+  <radialGradient id="torchGlow" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#ffe7b0" stop-opacity=".14"/>
+    <stop offset=".7" stop-color="#ffe7b0" stop-opacity=".04"/>
+    <stop offset="1" stop-color="#ffe7b0" stop-opacity="0"/>
+  </radialGradient>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

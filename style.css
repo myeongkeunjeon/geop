@@ -120,8 +120,24 @@ button {
 
 .hs { fill: transparent; cursor: pointer; }
 .show-hs .hs { fill: rgba(255, 80, 80, .18); stroke: #ff5050; stroke-width: 1; stroke-dasharray: 4 3; }
-.hs.pulse { animation: hs-pulse .35s ease-out; }
-@keyframes hs-pulse { 50% { fill: rgba(214, 210, 200, .14); } }
+.layer .peel { pointer-events: none; }
+/* 뜯는 동안엔 벽에 붙어 있던 움직임(늘어진 조각, 떨리는 귀퉁이…)이 벽지와 함께 사라진다 */
+.layer .wall-fx { transition: opacity .3s; }
+.layer.peeling .wall-fx { opacity: 0; }
+
+/* 정전 직후 벽 B 귀퉁이가 한 번 부풀었다 꺼진다 */
+.corner-breath { opacity: 0; transform-box: view-box; }
+.corner-breath.go { animation: corner-breath 2.6s ease-in-out; }
+@keyframes corner-breath { 45% { opacity: 1; transform: scale(1.06); } 100% { opacity: 0; transform: scale(1); } }
+
+/* 뜯을 수 있는 귀퉁이: 1초마다 미세하게 떨림 */
+.fx-tremble { transform-box: view-box; animation: tremble 1s ease-in-out infinite; }
+@keyframes tremble { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-5deg); } 86% { transform: rotate(3deg); } 93% { transform: rotate(-2deg); } }
+
+/* 다 뜯은 순간 0.3초 하얗게 */
+#flash { position: absolute; inset: 0; z-index: 15; background: #f4f1ea; opacity: 0; pointer-events: none; }
+#flash.on { animation: flash .5s ease-out; }
+@keyframes flash { 0% { opacity: 0; } 15% { opacity: .95; } 60% { opacity: .9; } 100% { opacity: 0; } }
 
 .turn {
   position: absolute;

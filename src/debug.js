@@ -50,6 +50,13 @@ export function initDebug(api) {
     section('벽', ...WALLS.map((w) => btn(w + (state.wall === w ? ' ●' : ''), () => (state.wall = w))));
     section('아이템 바로 얻기', ...allItemIds.map((id) => btn(items[id]?.name || id, () => addItem(id))),
       btn('소지품 비우기', () => (state.inventory = [])));
+    section('2026 상태',
+      btn(`정전 ${state.flags.blackout ? '끄기' : '켜기'}`, () => (state.flags.blackout ? (delete state.flags.blackout) : Object.assign(state.flags, { blackout: true, boxOpen: true, breathed: true }))),
+      btn('뜯기 준비', () => {
+        Object.assign(state.flags, { blackout: true, boxOpen: true, breathed: true, cornerWet: true, peelReady: true });
+        state.era = '2026';
+        state.wall = 'B';
+      }));
     section('보기', btn(`핫스팟 ${showHs ? '숨기기' : '보이기'}`, () => setDebugHotspots((showHs = !showHs))));
     section('엔딩 바로 보기', btn('엔딩 A', () => api.ending('A')), btn('엔딩 B', () => api.ending('B')));
     section('플래그', pre({ unlockedEras: state.unlockedEras, flags: state.flags, placed: state.placed }));

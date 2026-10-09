@@ -1,10 +1,13 @@
-import { state, save, turn, flag, setFlag } from './state.js';
+import { state, save, turn, flag, setFlag, unlockEra, goEra } from './state.js';
 import { ui, lines, items } from './data/text.js';
 import { installDefs } from './art/defs.js';
 import { itemIcon } from './art/items.js';
-import { renderScene, bindScene, hotspotEl, pulse } from './scene.js';
+import { renderScene, bindScene, hotspotEl } from './scene.js';
 import { act } from './interact.js';
 import { unlockAudio, play } from './audio.js';
+import { aimTorchAt } from './torch.js';
+import { initPeel } from './peel.js';
+import { peelArt2026 } from './art/2026.js';
 import { initDebug } from './debug.js';
 
 const $ = (id) => document.getElementById(id);
@@ -153,24 +156,63 @@ function flyToBag(hotspotId, gained) {
 
 /* ---------- 이벤트 (actions.js의 then) ---------- */
 const events = {
+  // 정전: 불이 꺼지고 손전등 빛만. 빛이 귀퉁이를 비추면, 귀퉁이가 한 번 숨 쉰다
   blackout() {
     setTimeout(() => {
       setFlag('blackout');
       save();
+      play('blackout');
       renderTop();
       renderScene('fade');
       say(lines.blackout);
+      aimTorchAt(43 + 0.78 * 330, 58 + 0.78 * 160);
+      setTimeout(() => {
+        document.querySelector('.layer:not(.leaving) .corner-breath')?.classList.add('go');
+        play('inhale');
+        setTimeout(() => say(lines.corner_breath), 900);
+        setTimeout(() => {
+          setFlag('breathed');
+          save();
+        }, 2800);
+      }, 2200);
     }, 1400);
   },
+  fillWater() {
+    play('water');
+  },
+  spray() {
+    play('spray');
+  },
+  // 커터칼로 귀퉁이를 들었다: 이제 손가락으로 끌어 뜯을 수 있다
   peel() {
-    // 2단계: 귀퉁이를 손가락으로 끌어 뜯는 연출
-    setTimeout(() => say(lines.peel_stub), 1200);
+    setFlag('peelReady');
+    save();
+    renderScene();
+    setTimeout(() => say(lines.peel_ready), 900);
   },
 };
 
+// 첫 겹을 다 뜯었다 → 2014
+function onPeeled() {
+  setFlag('peelReady', false);
+  setFlag('peeled2026');
+  state.stats.solved.P3 ??= Date.now();
+  unlockEra('2014');
+  goEra('2014');
+  save();
+  renderTop();
+  renderScene('fade');
+  say(lines.arrive2014);
+}
+
+initPeel({
+  isReady: () => state.era === '2026' && state.wall === 'B' && flag('peelReady'),
+  art: peelArt2026,
+  onDone: onPeeled,
+});
+
 /* ---------- 장면 조작 ---------- */
 function onHotspot(id) {
-  pulse(id);
   const use = selected;
   const res = act(id, use);
   if (use) selected = null;

@@ -457,10 +457,16 @@ const leakB = leakPath(118, 92, 3);
 const leakD = leakPath(96, 100, 11);
 
 const fxWall = {
-  A: () => `
+  A: (f) => `
     ${drip(leakA.ex, leakA.ey + 4, 300, { dur: 5.5, color: '#8a7a55' })}
     ${fly('M64 140C94 118 116 182 82 212S40 262 72 300', 17)}`,
-  B: () => `
+  B: (f) => `
+    ${f.blackout && !f.breathed ? `<g class="corner-breath" style="transform-origin:340px 160px"><ellipse cx="330" cy="160" rx="78" ry="112" fill="#000" filter="url(#bulge)"/></g>` : ''}
+    ${f.peelReady ? `<g class="fx-tremble" style="transform-origin:288px 210px">
+      <path d="M290 196l-20 14l18 10z" fill="#000" opacity=".35" transform="translate(2 4)"/>
+      <path d="M290 196q-14 4 -22 16q10 -2 20 6z" fill="url(#flapBack)"/>
+      <path d="M290 196q-14 4 -22 16" stroke="#f6f3ec" stroke-width=".8" fill="none"/>
+    </g>` : ''}
     <g class="fx-sway" style="transform-origin:300px 236px">
   <!-- 뜯겨 말려 늘어진 실크 조각 -->
   <g>
@@ -476,10 +482,10 @@ const fxWall = {
     ${creep('M378 204c-3 40 2 80 -1 120s3 90 1 142', 31)}
     ${drip(leakB.ex, leakB.ey + 4, 260, { dur: 6.5, begin: 1.2, color: '#8a7a55' })}
     ${fly('M252 384C272 352 302 362 292 332S252 300 272 280', 19, 3)}`,
-  C: () => `
+  C: (f) => `
     ${neighborLight(226, 98, 24, 32)}
     ${fly('M332 300C352 332 322 360 346 390S372 412 352 440', 15, 5)}`,
-  D: () => `
+  D: (f) => `
     ${drip(170, 274, 13, { dur: 2.8 })}
     ${drip(leakD.ex, leakD.ey + 4, 0.1, { dur: 7, color: '#8a7a55' })}
     ${fly('M240 120C236 160 248 200 240 246', 14, 2)}`,
@@ -490,8 +496,30 @@ export function draw2026(wall, state) {
   const f = state.flags;
   return {
     art: { A: wallA, B: wallB, C: wallC, D: wallD }[wall](f),
-    fx: fxWall[wall](),
+    fx: fxWall[wall](f),
     after: wall === 'A' ? doorFeet() : '', // 현관 문틈 불빛은 정전에도 꺼지지 않는다
     dark: !!f.blackout,
   };
 }
+
+// 뜯기(peel.js)가 쓰는 그림: 드러나는 2014 층과, 그 앞에 그대로 있는 상자
+export const peelArt2026 = {
+  under: () => {
+    const { l1995, l1974, bare } = tear;
+    return `
+    <rect width="${W}" height="${FLOOR_Y}" fill="url(#p2014)"/>
+    <rect width="${W}" height="${FLOOR_Y}" fill="url(#bulb)"/>
+    <rect y="${FLOOR_Y - 170}" width="${W}" height="170" fill="url(#scuff)"/>
+    <rect width="${W}" height="${FLOOR_Y}" fill="#1c2a28" opacity=".18"/>
+    <rect width="${W}" height="60" fill="url(#ceilShade)"/>
+    <rect x="${W - 46}" width="46" height="${FLOOR_Y}" fill="url(#cornerR)" opacity=".75"/>
+    <rect width="46" height="${FLOOR_Y}" fill="url(#cornerL)" opacity=".75"/>
+    <ellipse cx="120" cy="300" rx="70" ry="40" fill="#5a6a60" opacity=".2"/>
+    <ellipse cx="200" cy="120" rx="50" ry="26" fill="none" stroke="#7d6538" stroke-width="2" opacity=".35"/>
+    <polygon points="${pts(l1995)}" fill="url(#p1995)"/>
+    <polygon points="${pts(l1974)}" fill="url(#p1974)"/>
+    <polygon points="${pts(bare)}" fill="url(#pBare)"/>
+    <path d="M380 150q-10 18 -4 40q6 20 15 26V140z" fill="#3f2219" opacity=".8"/>`;
+  },
+  front: () => box(true),
+};

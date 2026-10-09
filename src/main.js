@@ -1,4 +1,4 @@
-import { state, save, turn, flag, setFlag, unlockEra, goEra } from './state.js';
+import { state, save, turn, flag, setFlag, unlockEra, goEra, addItem } from './state.js';
 import { ui, lines, items } from './data/text.js';
 import { installDefs } from './art/defs.js';
 import { itemIcon } from './art/items.js';
@@ -8,6 +8,9 @@ import { unlockAudio, play } from './audio.js';
 import { aimTorchAt, switchOn } from './torch.js';
 import { initPeel } from './peel.js';
 import { peelArt2026 } from './art/2026.js';
+import { peelArt2014 } from './art/2014.js';
+import { openStrip } from './strip.js';
+import { openRadio, openLock } from './puzzles/dial.js';
 import { initDebug } from './debug.js';
 
 const $ = (id) => document.getElementById(id);
@@ -41,7 +44,8 @@ addEventListener('orientationchange', () => setTimeout(fit, 200));
 
 /* ---------- 상단, 자막 ---------- */
 function renderTop() {
-  $('clock').textContent = flag('blackout') ? ui.clockBlackout : ui.clockBefore;
+  // 2026은 정전 전후로, 아래 시대들은 늘 2시 13분
+  $('clock').textContent = state.era !== '2026' || flag('blackout') ? ui.clockBlackout : ui.clockBefore;
   $('place').textContent = `${ui.place} · ${ui.eraNames[state.era]}`;
 }
 
@@ -175,31 +179,97 @@ const events = {
   spray() {
     play('spray');
   },
-  // 커터칼로 귀퉁이를 들었다: 이제 손가락으로 끌어 뜯을 수 있다
+  // 귀퉁이를 들었다: 이제 손가락으로 끌어 뜯을 수 있다
   peel() {
-    setFlag('peelReady');
+    setFlag(`peel_${state.era}`);
     save();
     renderScene();
-    setTimeout(() => say(lines.peel_ready), 900);
+    setTimeout(() => say(lines[`peel_ready_${state.era}`] || lines.peel_ready), 900);
   },
+  // 시대 이동 띠
+  strip() {
+    openStrip(travel);
+  },
+  // 2014 라디오: 91.7에 맞추면 사연
+  radio() {
+    openRadio({
+      target: 91.7,
+      story: lines.radio_story,
+      staticText: lines.radio_static,
+      nearText: lines.radio_near,
+      onHeard() {
+        if (!flag('radioHeard')) {
+          setFlag('radioHeard');
+          state.stats.solved.P4 ??= Date.now();
+          save();
+        }
+        say(lines.radio_done);
+      },
+    });
+  },
+  // 2014 책상 서랍: 0519
+  lock() {
+    openLock({
+      code: '0519',
+      wrongText: lines.lock_wrong,
+      onWrong() {
+        state.stats.wrong.drawer = (state.stats.wrong.drawer || 0) + 1;
+        save();
+      },
+      onOpen() {
+        setFlag('drawerOpen');
+        state.stats.solved.P5 ??= Date.now();
+        const gained = ['hera', 'diary'].filter((id) => !state.inventory.includes(id));
+        gained.forEach(addItem);
+        save();
+        renderScene();
+        flyToBag('desk', gained);
+        say(lines.lock_open);
+      },
+    });
+  },
+  // 엔딩 B 물건을 너무 일찍 두려 했다 (발견율 참고용 통계)
+  early() {
+    state.stats.earlyPlace++;
+    save();
+  },
+  placed() {},
 };
 
-// 첫 겹을 다 뜯었다 → 2014
-function onPeeled() {
-  setFlag('peelReady', false);
-  setFlag('peeled2026');
-  state.stats.solved.P3 ??= Date.now();
-  unlockEra('2014');
-  goEra('2014');
+const NEXT = { 2026: '2014', 2014: '1995', 1995: '1974', 1974: 'bare' };
+const SOLVE = { 2026: 'P3', 2014: 'P6', 1995: 'P9', 1974: 'P12' };
+
+// 한 겹을 다 뜯었다 → 아래 시대로
+function onPeeled(era) {
+  setFlag(`peel_${era}`, false);
+  setFlag(`peeled_${era}`);
+  state.stats.solved[SOLVE[era]] ??= Date.now();
+  const next = NEXT[era];
+  unlockEra(next);
+  goEra(next);
   save();
   renderTop();
   renderScene('fade');
-  say(lines.arrive2014);
+  say(lines[`arrive${next}`] || '');
 }
 
+// 띠에서 고른 시대로 이동
+function travel(era) {
+  goEra(era);
+  selected = null;
+  save();
+  renderTop();
+  renderBag();
+  renderScene('fade');
+  say(lines[`arrive${era}b`] || lines[`arrive${era}`] || '');
+}
+
+const peelCfg = {
+  2026: { r0: 112, speed: 1.1, curl: 'url(#flapBack)', sound: 'tear', ...peelArt2026 },
+  2014: peelArt2014,
+};
 initPeel({
-  isReady: () => state.era === '2026' && state.wall === 'B' && flag('peelReady'),
-  art: peelArt2026,
+  current: () => (state.wall === 'B' && flag(`peel_${state.era}`) && peelCfg[state.era] ? { era: state.era, ...peelCfg[state.era] } : null),
   onDone: onPeeled,
 });
 

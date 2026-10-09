@@ -63,6 +63,19 @@ const sounds = {
   },
   // 실크 벽지: 깨끗하게 쫙
   tear: () => burst({ dur: 0.05 + Math.random() * 0.06, type: 'highpass', freq: 2200 + Math.random() * 1800, q: 0.7, gain: 0.22 }),
+  // 젖은 합지: 축축하고 느리게
+  tearWet: () => burst({ dur: 0.1 + Math.random() * 0.08, type: 'bandpass', freq: 700 + Math.random() * 500, q: 0.6, gain: 0.26, attack: 0.02 }),
+  // 자물쇠: 덜컥 / 찰칵
+  rattle: () => {
+    for (let i = 0; i < 3; i++) burst({ dur: 0.05, type: 'bandpass', freq: 1800, q: 3, gain: 0.25, at: i * 0.06 });
+    tone(120, 0.12, { gain: 0.12, type: 'square', at: 0.02 });
+  },
+  unlock: () => {
+    burst({ dur: 0.04, type: 'highpass', freq: 2500, gain: 0.3 });
+    tone(900, 0.05, { gain: 0.1, type: 'square', at: 0.05 });
+    burst({ dur: 0.18, type: 'lowpass', freq: 500, gain: 0.2, at: 0.12 });
+  },
+  dial: () => tone(2400, 0.015, { gain: 0.04, type: 'square' }),
   // 조각이 떨어짐
   drop: () => {
     tone(110, 0.35, { gain: 0.25, to: 38 });
@@ -87,6 +100,58 @@ const sounds = {
   },
   // 분무: 칙
   spray: () => burst({ dur: 0.28, type: 'highpass', freq: 4500, gain: 0.18, attack: 0.01 }),
+};
+
+// 라디오: 주파수가 맞을수록 잡음이 줄고 노래가 들린다 (signal 0~1)
+let radioNodes = null;
+export const radioSound = {
+  start() {
+    if (!ctx || radioNodes) return;
+    try {
+      const src = ctx.createBufferSource();
+      src.buffer = noise();
+      src.loop = true;
+      const f = ctx.createBiquadFilter();
+      f.type = 'bandpass';
+      f.frequency.value = 2200;
+      f.Q.value = 0.5;
+      const g = ctx.createGain();
+      g.gain.value = 0.12;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start();
+      const o = ctx.createOscillator();
+      const og = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = 330;
+      og.gain.value = 0;
+      o.connect(og).connect(ctx.destination);
+      o.start();
+      // 오래된 라디오 노래처럼 느리게 오르내리는 음
+      const notes = [330, 392, 440, 392, 349, 330, 294, 330];
+      let i = 0;
+      const timer = setInterval(() => o.frequency.setTargetAtTime(notes[i++ % notes.length], ctx.currentTime, 0.08), 520);
+      radioNodes = { src, g, o, og, timer };
+    } catch {
+      radioNodes = null;
+    }
+  },
+  set(signal) {
+    if (!radioNodes) return;
+    const t = ctx.currentTime;
+    radioNodes.g.gain.setTargetAtTime(0.13 * (1 - signal) + 0.008, t, 0.05);
+    radioNodes.og.gain.setTargetAtTime(0.045 * signal, t, 0.05);
+  },
+  stop() {
+    if (!radioNodes) return;
+    try {
+      clearInterval(radioNodes.timer);
+      radioNodes.src.stop();
+      radioNodes.o.stop();
+    } catch {
+      /* 이미 멈춤 */
+    }
+    radioNodes = null;
+  },
 };
 
 export function play(name) {

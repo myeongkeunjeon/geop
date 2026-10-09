@@ -9,7 +9,7 @@ import { play, vibrate } from './audio.js';
 import { aimTorch, widenTorch } from './torch.js';
 
 const C = [392, 156]; // 뜯기는 중심: 벽 B 오른쪽 모서리의 찢긴 자리 (벽 좌표)
-const R0 = 112; // 처음 구멍 크기
+let R0 = 112; // 처음 구멍 크기 (재질마다 다름)
 const RF = 505; // 벽 전체가 드러나는 크기
 const N = 120;
 const jit = (() => {
@@ -20,7 +20,10 @@ const jit = (() => {
   return a.map((v, i) => (v + a[(i + 1) % N] * 0.6 + a[(i + N - 1) % N] * 0.6) / 2.2);
 })();
 
-let opts = null; // { isReady, art: { under, front }, onDone }
+// opts: { current() → 지금 뜯을 수 있는 벽의 설정 또는 null, onDone(era) }
+// 설정: { era, under(), front(), speed, curl, sound, r0 }
+let opts = null;
+let cfg = null;
 let r = R0;
 let el = null;
 let busy = false;
@@ -55,7 +58,9 @@ function draw() {
 
 // 장면 층에 뜯기 그림을 붙인다 (뜯기 준비가 된 벽 B에서만)
 export function mountPeel(layer) {
-  if (!opts?.isReady()) return;
+  cfg = opts?.current();
+  if (!cfg) return;
+  if (R0 !== cfg.r0) r = R0 = cfg.r0;
   const art = layer.querySelector(':scope > .art');
   if (!art || layer.querySelector(':scope > .peel')) return;
   const t = document.createElement('div');
@@ -65,12 +70,12 @@ export function mountPeel(layer) {
       <clipPath id="peelWall"><rect width="${W}" height="462"/></clipPath>
     </defs>
     <g clip-path="url(#peelWall)">
-      <g clip-path="url(#peelHole)">${opts.art.under()}</g>
+      <g clip-path="url(#peelHole)">${cfg.under()}</g>
       <path class="p-shadow" fill="none" stroke="#000" stroke-opacity=".32" stroke-width="8"/>
-      <path class="p-curl" fill="url(#flapBack)" fill-rule="evenodd"/>
+      <path class="p-curl" fill="${cfg.curl}" fill-rule="evenodd"/>
       <path class="p-fiber" stroke="#f6f3ec" stroke-width=".8" stroke-linecap="round"/>
     </g>
-    ${opts.art.front()}
+    ${cfg.front()}
   </g></svg>`;
   el = t.firstElementChild;
   art.after(el);
@@ -88,7 +93,7 @@ let lastBuzz = r;
 function setR(v) {
   r = Math.min(Math.max(v, R0), RF + 140);
   if (r - lastSound > 9) {
-    play('tear');
+    play(cfg?.sound || 'tear');
     lastSound = r;
   } else if (r < lastSound) lastSound = r;
   if (r - lastBuzz > 34) {
@@ -130,14 +135,14 @@ function finish() {
       el = null;
       r = R0;
       busy = false;
-      opts.onDone();
+      opts.onDone(cfg.era);
     }, 300);
   });
 }
 
 // scene.js가 pointerdown마다 묻는다: 이 손가락을 뜯기가 가져갈까?
 export function capturePeel(e) {
-  if (!el || busy || !opts?.isReady()) return false;
+  if (!el || busy || !opts?.current()) return false;
   if (!e.target.closest?.('[data-hs="corner"]')) {
     const p = local(e);
     if (!p || Math.hypot(p.x - C[0], p.y - C[1]) > r + 40) return false;
@@ -149,7 +154,7 @@ export function capturePeel(e) {
     const p = local(ev);
     if (!p) return;
     moved = Math.max(moved, Math.hypot(p.x - start.x, p.y - start.y));
-    setR(Math.max(r, baseR + moved * 1.1));
+    setR(Math.max(r, baseR + moved * (cfg?.speed || 1.1)));
     aimTorch(ev.clientX, ev.clientY);
     if (r >= RF) {
       end();

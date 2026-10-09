@@ -96,7 +96,7 @@ function wallpaperBag(f) {
 }
 
 // 현관: 방바닥보다 한 단 낮은 타일 바닥. 소실점으로 모이는 줄눈, 앞쪽엔 장판 끝 턱
-function entry() {
+export function entry() {
   const [vx, vy] = VP;
   const at = (x, y) => vx + ((x - vx) * (y - vy)) / (FLOOR_Y - vy); // 뒷벽 x가 깊이 y에서 놓이는 자리
   const xl = 8;
@@ -161,14 +161,14 @@ function wallA(f) {
 /* ================= 벽 B · 귀퉁이 (방 시안) ================= */
 
 // 벽 B 귀퉁이 층 (오른쪽 끝 = 방 모서리). 아래 층일수록 덜 찢겨 모서리 쪽으로 좁아진다
-const tear = {
+export const tear = {
   l2014: jag([[391, 46], [334, 52], [304, 92], [300, 150], [284, 204], [312, 252], [352, 266], [391, 272]], 3.2, 21),
   l1995: jag([[391, 70], [344, 80], [324, 122], [328, 172], [316, 206], [342, 236], [391, 246]], 2.6, 32),
   l1974: jag([[391, 96], [356, 106], [344, 146], [352, 186], [360, 214], [391, 222]], 2.2, 43, 6),
   bare: jag([[391, 122], [370, 130], [364, 160], [372, 194], [391, 200]], 1.8, 54, 5),
 };
 
-function fibers(points, seed) {
+export function fibers(points, seed, color = '#f6f3ec') {
   const r = rng(seed);
   let s = '';
   for (const [x, y] of points) {
@@ -177,7 +177,7 @@ function fibers(points, seed) {
     const l = 2 + r() * 5;
     s += `M${x.toFixed(1)} ${y.toFixed(1)}l${(Math.cos(a) * l).toFixed(1)} ${(Math.sin(a) * l).toFixed(1)}`;
   }
-  return `<path d="${s}" stroke="#f6f3ec" stroke-width=".7" stroke-linecap="round" opacity=".9"/>`;
+  return `<path d="${s}" stroke="${color}" stroke-width=".7" stroke-linecap="round" opacity=".9"/>`;
 }
 
 const HAND = `
@@ -462,7 +462,7 @@ const fxWall = {
     ${fly('M64 140C94 118 116 182 82 212S40 262 72 300', 17)}`,
   B: (f) => `
     ${f.blackout && !f.breathed ? `<g class="corner-breath" style="transform-origin:340px 160px"><ellipse cx="330" cy="160" rx="78" ry="112" fill="#000" filter="url(#bulge)"/></g>` : ''}
-    ${f.peelReady ? `<g class="fx-tremble" style="transform-origin:288px 210px">
+    ${f.peel_2026 ? `<g class="fx-tremble" style="transform-origin:288px 210px">
       <path d="M290 196l-20 14l18 10z" fill="#000" opacity=".35" transform="translate(2 4)"/>
       <path d="M290 196q-14 4 -22 16q10 -2 20 6z" fill="url(#flapBack)"/>
       <path d="M290 196q-14 4 -22 16" stroke="#f6f3ec" stroke-width=".8" fill="none"/>

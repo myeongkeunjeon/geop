@@ -13,15 +13,15 @@ const defs = /* svg */ `
   <!-- 2014 꽃무늬 합지 -->
   <pattern id="p2014" width="34" height="34" patternUnits="userSpaceOnUse">
     <rect width="34" height="34" fill="#8fb0bf"/>
-    <g fill="#e9eef0" opacity=".85">
+    <g fill="#e3e9ea" opacity=".6">
       <circle cx="8" cy="5" r="2.6"/><circle cx="12" cy="8" r="2.6"/><circle cx="10.5" cy="12.5" r="2.6"/><circle cx="5.5" cy="12.5" r="2.6"/><circle cx="4" cy="8" r="2.6"/>
     </g>
-    <circle cx="8" cy="9" r="1.7" fill="#c99a9a"/>
+    <circle cx="8" cy="9" r="1.7" fill="#b98f90" opacity=".8"/>
     <g transform="translate(17 17)">
-      <g fill="#e9eef0" opacity=".7">
+      <g fill="#e3e9ea" opacity=".45">
         <circle cx="8" cy="5" r="2"/><circle cx="11" cy="7.5" r="2"/><circle cx="10" cy="11" r="2"/><circle cx="6" cy="11" r="2"/><circle cx="5" cy="7.5" r="2"/>
       </g>
-      <circle cx="8" cy="8.5" r="1.3" fill="#c99a9a"/>
+      <circle cx="8" cy="8.5" r="1.3" fill="#b98f90" opacity=".8"/>
     </g>
   </pattern>
 
@@ -216,6 +216,36 @@ const defs = /* svg */ `
     <stop offset=".7" stop-color="#ffe7b0" stop-opacity=".04"/>
     <stop offset="1" stop-color="#ffe7b0" stop-opacity="0"/>
   </radialGradient>
+  <!-- 2014 -->
+  <linearGradient id="doorBrown" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#5a3f2c"/>
+    <stop offset=".5" stop-color="#74533a"/>
+    <stop offset="1" stop-color="#553b29"/>
+  </linearGradient>
+  <linearGradient id="flapBack14" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#d8d6cc"/>
+    <stop offset=".6" stop-color="#a9aca6"/>
+    <stop offset="1" stop-color="#6f7470"/>
+  </linearGradient>
+  <linearGradient id="whiteGloss" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#c9c6bc"/>
+    <stop offset=".4" stop-color="#e2dfd6"/>
+    <stop offset="1" stop-color="#b9b6ac"/>
+  </linearGradient>
+  <linearGradient id="curtain" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#b98a8e"/>
+    <stop offset=".25" stop-color="#d4a9ab"/>
+    <stop offset=".5" stop-color="#a77a7e"/>
+    <stop offset=".75" stop-color="#cfa2a5"/>
+    <stop offset="1" stop-color="#9c7074"/>
+  </linearGradient>
+  <linearGradient id="lampCone" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffe6a8" stop-opacity=".35"/>
+    <stop offset="1" stop-color="#ffe6a8" stop-opacity="0"/>
+  </linearGradient>
+  <pattern id="grille" width="4" height="4" patternUnits="userSpaceOnUse">
+    <rect width="4" height="4" fill="#3a3a3c"/><circle cx="2" cy="2" r=".9" fill="#151516"/>
+  </pattern>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

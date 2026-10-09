@@ -27,5 +27,6 @@ export function act(target, use = null) {
   gained.forEach(addItem);
   rule.sets.forEach((f) => setFlag(f));
   if (rule.solve) state.stats.solved[rule.solve] ??= Date.now();
+  if (rule.places) state.placed[rule.places] = true;
   return { text: rule.text, gained, then: rule.then || null };
 }

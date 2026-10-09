@@ -3,13 +3,14 @@ import { state } from './state.js';
 import { ui } from './data/text.js';
 import { hotspotsFor } from './data/rooms.js';
 import { draw2026 } from './art/2026.js';
+import { draw2014 } from './art/2014.js';
 import { W, H, shell, wallTag } from './art/common.js';
 import { lamp, motes } from './art/fx.js';
 import { roomShell, roomFront, backTransform } from './art/room.js';
 import { torchSvg, aimTorch } from './torch.js';
 import { mountPeel, capturePeel } from './peel.js';
 
-const drawers = { 2026: draw2026 };
+const drawers = { 2026: draw2026, 2014: draw2014 };
 
 const layers = document.getElementById('layers');
 const sceneEl = document.getElementById('scene');

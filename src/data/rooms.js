@@ -34,6 +34,37 @@ export const rooms = {
       ],
     },
   },
+  2014: {
+    A: {
+      hotspots: [
+        { id: 'door', label: '현관문', x: 150, y: 110, w: 100, h: 356 },
+        { id: 'backpack', label: '가방', x: 40, y: 184, w: 62, h: 96 },
+        { id: 'flyers', label: '전단', x: 92, y: 496, w: 76, h: 44 },
+        { id: 'sneakers', label: '운동화', x: 168, y: 498, w: 74, h: 34 },
+      ],
+    },
+    B: {
+      hotspots: [
+        { id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 },
+        { id: 'desk', label: '책상', x: 38, y: 330, w: 216, h: 144 },
+        { id: 'radio', label: '라디오', x: 60, y: 270, w: 100, h: 62 },
+        { id: 'postit', label: '포스트잇', x: 190, y: 220, w: 48, h: 48 },
+      ],
+    },
+    C: {
+      hotspots: [
+        { id: 'window', label: '창문', x: 110, y: 70, w: 170, h: 170 },
+        { id: 'bed', label: '접이식 침대', x: 22, y: 444, w: 326, h: 84 },
+      ],
+    },
+    D: {
+      hotspots: [
+        { id: 'kettle', label: '전기포트', x: 48, y: 236, w: 54, h: 54 },
+        { id: 'noodles', label: '컵라면', x: 104, y: 236, w: 82, h: 54 },
+        { id: 'fridge', label: '냉장고', x: 254, y: 302, w: 96, h: 172 },
+      ],
+    },
+  },
 };
 
 export function hotspotsFor(era, wall, flags) {

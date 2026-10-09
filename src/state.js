@@ -26,7 +26,12 @@ function load() {
     const data = JSON.parse(raw);
     // 나중에 필드가 늘어도 옛 저장이 깨지지 않게 기본값 위에 덮는다
     const base = fresh();
-    return { ...base, ...data, stats: { ...base.stats, ...data.stats } };
+    const s = { ...base, ...data, stats: { ...base.stats, ...data.stats } };
+    // 옛 플래그 이름 → 새 이름 (뜯기는 시대별로 peel_*, peeled_*)
+    const f = s.flags;
+    if (f.peelReady) (f.peel_2026 = true), delete f.peelReady;
+    if (f.peeled2026) (f.peeled_2026 = true), delete f.peeled2026;
+    return s;
   } catch {
     return null;
   }

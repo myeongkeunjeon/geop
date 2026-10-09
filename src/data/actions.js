@@ -8,6 +8,7 @@
 //   text     text.js lines 키
 //   then     이어서 일어날 이벤트 (main.js events)
 //   solve    푼 퍼즐 번호 (통계: 처음 푼 시각)
+//   places   엔딩 B: 제자리에 둔 물건 (state.placed)
 
 const era = (e, rules) => rules.map((r) => ({ era: e, use: null, requires: [], forbids: [], gives: [], takes: [], sets: [], ...r }));
 
@@ -28,7 +29,8 @@ export const actions = [
     { target: 'corner', use: 'cutter', forbids: ['cornerWet'], text: 'wont_budge' },
     { target: 'corner', use: 'spray', requires: ['blackout'], forbids: ['cornerWet'], sets: ['cornerWet'], text: 'corner_wet', then: 'spray' },
     { target: 'corner', use: 'spray', forbids: ['blackout'], text: 'corner_spray_early', then: 'spray' },
-    { target: 'corner', use: 'cutter', requires: ['cornerWet'], forbids: ['peelReady'], text: 'corner_lift', then: 'peel' },
+    { target: 'corner', use: 'cutter', requires: ['cornerWet'], forbids: ['peel_2026', 'peeled_2026'], text: 'corner_lift', then: 'peel' },
+    { target: 'corner', requires: ['peeled_2026'], then: 'strip' },
     { target: 'corner', requires: ['cornerWet'], text: 'corner_wet_look' },
     { target: 'corner', requires: ['blackout'], text: 'corner_look_dark' },
     { target: 'corner', text: 'corner_look' },
@@ -45,5 +47,37 @@ export const actions = [
     // 분무기는 정전과 상관없이 얻는다
     { target: 'sink', forbids: ['gotSpray'], gives: ['spray'], sets: ['gotSpray'], text: 'sink_spray', then: 'fillWater', solve: 'P2' },
     { target: 'sink', text: 'sink_after' },
+    { target: 'door', use: 'drawing', text: 'drawing_too_early' },
+  ]),
+
+  ...era('2014', [
+    // 현관
+    { target: 'door', use: 'drawing', text: 'drawing_too_early' },
+    { target: 'door', text: 'door14' },
+    { target: 'backpack', text: 'backpack14' },
+    { target: 'flyers', text: 'flyers14' },
+    { target: 'sneakers', text: 'sneakers14' },
+
+    // 귀퉁이와 책상
+    { target: 'desk', use: 'notice', requires: ['reachedBare'], takes: ['notice'], places: 'notice', text: 'notice_placed', then: 'placed' },
+    { target: 'desk', use: 'notice', forbids: ['reachedBare'], sets: ['triedNoticeEarly'], text: 'notice_too_early', then: 'early' },
+    { target: 'desk', forbids: ['drawerOpen'], text: 'desk_locked', then: 'lock' },
+    { target: 'desk', text: 'desk_open' },
+    { target: 'radio', then: 'radio' },
+    { target: 'postit', text: 'postit14' },
+    { target: 'corner', use: 'hera', forbids: ['w14Wet'], text: 'wont_budge' },
+    { target: 'corner', use: 'spray', forbids: ['w14Wet'], sets: ['w14Wet'], text: 'flower_wet', then: 'spray' },
+    { target: 'corner', use: 'hera', requires: ['w14Wet'], forbids: ['peel_2014', 'peeled_2014'], text: 'flower_lift', then: 'peel' },
+    { target: 'corner', use: 'cutter', text: 'cutter14' },
+    { target: 'corner', then: 'strip' },
+
+    // 창문
+    { target: 'window', text: 'window14' },
+    { target: 'bed', text: 'bed14' },
+
+    // 부엌
+    { target: 'kettle', text: 'kettle14' },
+    { target: 'noodles', text: 'noodles14' },
+    { target: 'fridge', text: 'fridge14' },
   ]),
 ];

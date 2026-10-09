@@ -12,8 +12,9 @@ const drawers = { 2026: draw2026 };
 const layers = document.getElementById('layers');
 const sceneEl = document.getElementById('scene');
 
-// 층 순서: 방(천장·옆벽·바닥) → 뒷벽 그림 → 앞쪽 어둠·입자 → 움직이는 층과 핫스팟
-function svgFor(era, wall) {
+// 층 순서: 방(천장·옆벽·바닥) → 뒷벽 그림 → 앞쪽 어둠·입자 (art)
+//          → 움직이는 층 (fx) → 핫스팟 (hit)
+function partsFor(era, wall) {
   const draw = drawers[era];
   const { art, fx = '', after = '', dark = false } = draw
     ? draw(wall, state)
@@ -21,22 +22,62 @@ function svgFor(era, wall) {
   const hs = hotspotsFor(era, wall, state.flags)
     .map((h) => `<rect class="hs" data-hs="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}"/>`)
     .join('');
-  const open = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"`;
+  const open = (cls) => `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" class="${cls}">`;
   // 정전: 2단계에서 손전등 원형 마스크로 바뀐다
   const top = dark
     ? `<rect width="${W}" height="${H}" fill="#000" opacity=".82"/>`
     : `${lamp()}${motes(wall.charCodeAt(0))}`;
-  return `${open} class="art">${roomShell(era)}<g transform="${backTransform}">${art}</g>${roomFront()}</svg>`
-    + `${open} class="fx"><g transform="${backTransform}">${fx}</g>${top}<g transform="${backTransform}">${after}${hs}</g></svg>`;
+  return {
+    art: `${open('art')}${roomShell(era)}<g transform="${backTransform}">${art}</g>${roomFront()}</svg>`,
+    fx: `${open('fx')}<g transform="${backTransform}">${fx}</g>${top}<g transform="${backTransform}">${after}</g></svg>`,
+    hit: `${open('hit')}<g transform="${backTransform}">${hs}</g></svg>`,
+  };
 }
 
-// anim: 'next' | 'prev' | 'fade' | undefined(즉시)
-export function renderScene(anim) {
-  const old = [...layers.querySelectorAll('.layer:not(.leaving)')];
+function toNode(html) {
+  const t = document.createElement('div');
+  t.innerHTML = html;
+  const n = t.firstElementChild;
+  n.__src = html;
+  return n;
+}
+
+// 움직임(SMIL)을 페이지 시계에 맞춘다: 벽을 바꾸거나 다시 그려도 파리·먼지가 처음으로 돌아가지 않는다
+function syncClock(svg) {
+  try {
+    svg.setCurrentTime(performance.now() / 1000);
+  } catch {
+    /* 지원 안 함 */
+  }
+}
+
+function buildLayer(parts) {
   const el = document.createElement('div');
   el.className = 'layer';
-  el.innerHTML = svgFor(state.era, state.wall);
+  for (const k of ['art', 'fx', 'hit']) el.append(toNode(parts[k]));
+  syncClock(el.querySelector('.fx'));
+  return el;
+}
 
+// anim: 'next' | 'prev' | 'fade' | undefined(제자리 갱신)
+export function renderScene(anim) {
+  const parts = partsFor(state.era, state.wall);
+  const cur = layers.querySelector('.layer:not(.leaving)');
+
+  // 제자리 갱신: 바뀐 층만 갈아 끼워 움직임이 끊기지 않게
+  if (!anim && cur) {
+    for (const k of ['art', 'fx', 'hit']) {
+      const old = cur.querySelector(`:scope > .${k}`);
+      if (old.__src === parts[k]) continue;
+      const n = toNode(parts[k]);
+      old.replaceWith(n);
+      if (k === 'fx') syncClock(n);
+    }
+    return;
+  }
+
+  const el = buildLayer(parts);
+  const old = [...layers.querySelectorAll('.layer:not(.leaving)')];
   if (!anim || !old.length) {
     layers.replaceChildren(el);
     return;

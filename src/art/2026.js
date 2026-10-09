@@ -1,6 +1,6 @@
 // 2026 벽 그림. 흰 실크벽지, 차가운 회색. 화면을 어둡게 누르지 않고 물건과 벽의 낡음으로 음산하게.
 import {
-  W, H, FLOOR_Y, shell, face, moldPatch, waterStain, ceilingLeak, seams, bubble, nailHole,
+  W, H, FLOOR_Y, shell, face, VP, moldPatch, waterStain, ceilingLeak, seams, bubble, nailHole,
   ghostFrame, crack, scribble, tally, jag, pts, rng, leakPath,
 } from './common.js';
 import { fly, drip, doorFeet, breathe, creep, neighborLight } from './fx.js';
@@ -95,13 +95,43 @@ function wallpaperBag(f) {
   <ellipse cx="300" cy="496" rx="14" ry="9" fill="#3f2219" opacity=".35" filter="url(#rough)"/>`;
 }
 
+// 현관: 방바닥보다 한 단 낮은 타일 바닥. 소실점으로 모이는 줄눈, 앞쪽엔 장판 끝 턱
+function entry() {
+  const [vx, vy] = VP;
+  const at = (x, y) => vx + ((x - vx) * (y - vy)) / (FLOOR_Y - vy); // 뒷벽 x가 깊이 y에서 놓이는 자리
+  const xl = 8;
+  const xr = 266;
+  const front = 536;
+  const rows = [FLOOR_Y, 489, 504, 521, front];
+  let grout = '';
+  for (let x = xl; x <= xr + 0.1; x += (xr - xl) / 7) grout += `M${x.toFixed(1)} ${FLOOR_Y}L${at(x, front).toFixed(1)} ${front}`;
+  for (const y of rows.slice(1, -1)) grout += `M${at(xl, y).toFixed(1)} ${y}L${at(xr, y).toFixed(1)} ${y}`;
+  const poly = (y1, y2) => `${xl},${FLOOR_Y} ${xr},${FLOOR_Y} ${at(xr, y2).toFixed(1)},${y2} ${at(xl, y2).toFixed(1)},${y2}`;
+  return `<g>
+    <polygon points="${poly(FLOOR_Y, front)}" fill="#7d7a72"/>
+    <polygon points="${poly(FLOOR_Y, front)}" fill="url(#rot)" opacity=".35"/>
+    <path d="${grout}" stroke="#3e3c37" stroke-width="1.2"/>
+    <ellipse cx="150" cy="500" rx="60" ry="10" fill="#4a4033" opacity=".35" filter="url(#rough)"/>
+    <!-- 벽 밑동 그늘 -->
+    <polygon points="${xl},${FLOOR_Y} ${xr},${FLOOR_Y} ${at(xr, 484).toFixed(1)},484 ${at(xl, 484).toFixed(1)},484" fill="#000" opacity=".35"/>
+    <!-- 턱: 현관과 방바닥 사이. 오른쪽 옆으로도 꺾여 벽까지 간다 -->
+    <polygon points="${at(xr, front).toFixed(1)},${front} ${xr},${FLOOR_Y} ${xr + 6},${FLOOR_Y} ${at(xr, front) + 7},${front}" fill="#8a7448"/>
+    <path d="M${xr} ${FLOOR_Y}L${at(xr, front).toFixed(1)} ${front}" stroke="#000" stroke-opacity=".5" stroke-width="2"/>
+    <rect x="${at(xl, front) - 40}" y="${front - 3}" width="${at(xr, front) - at(xl, front) + 47}" height="3" fill="#000" opacity=".5"/>
+    <rect x="${at(xl, front) - 40}" y="${front}" width="${at(xr, front) - at(xl, front) + 47}" height="5" fill="#9a8458"/>
+    <rect x="${at(xl, front) - 40}" y="${front}" width="${at(xr, front) - at(xl, front) + 47}" height="1.2" fill="#c8b488"/>
+  </g>`;
+}
+
 function shoes() {
   // 내 것이 아닌 낡은 신발 한 켤레가 문을 향해 가지런히
   return `<g>
+    <g transform="translate(0 -6)">
     <ellipse cx="206" cy="526" rx="30" ry="5" fill="#000" opacity=".4" filter="url(#soft1)"/>
     <path d="M182 524c0 -8 4 -14 10 -14s9 6 9 14z" fill="#2c2520"/>
     <path d="M206 524c0 -8 4 -14 10 -14s9 6 9 14z" fill="#2c2520"/>
     <path d="M186 516c3 -3 8 -3 11 0M210 516c3 -3 8 -3 11 0" stroke="#5a4c40" stroke-width="1" fill="none"/>
+    </g>
   </g>`;
 }
 
@@ -119,9 +149,7 @@ function wallA(f) {
   ${scribble('2:13', 44, 280, { size: 12, rot: -2, opacity: 0.3 })}
   ${scribble('2:13', 96, 246, { size: 9, rot: 8, opacity: 0.32 })}
   ${scribble('2:13', 106, 272, { size: 10, rot: -9, opacity: 0.25 })}
-  <polygon points="140,${FLOOR_Y} 260,${FLOOR_Y} 283,${H} 117,${H}" fill="url(#pEntry)"/>
-  <polygon points="140,${FLOOR_Y} 260,${FLOOR_Y} 283,${H} 117,${H}" fill="#000" opacity=".25"/>
-  <rect x="140" y="${FLOOR_Y}" width="120" height="4" fill="#000" opacity=".45"/>
+  ${entry()}
   ${door()}
   ${shoes()}
   ${shoeCabinet(f)}

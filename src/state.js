@@ -31,6 +31,9 @@ function load() {
     const f = s.flags;
     if (f.peelReady) (f.peel_2026 = true), delete f.peelReady;
     if (f.peeled2026) (f.peeled_2026 = true), delete f.peeled2026;
+    // 다 쓴 아이템 정리
+    if (f.cabinetOpen) s.inventory = s.inventory.filter((id) => id !== 'key');
+    if (f.stoveLit) s.inventory = s.inventory.filter((id) => id !== 'matches');
     return s;
   } catch {
     return null;

@@ -26,6 +26,12 @@ const card = $('card');
 
 let selected = null; // 선택된 소지품 id (저장하지 않음)
 
+// 문구가 여러 개면 그중 하나를 고른다
+const line = (k) => {
+  const v = lines[k];
+  return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : v;
+};
+
 /* ---------- 화면 맞추기 ----------
    폭 390 기준으로 안전 영역(노치·홈 표시줄 제외)을 꽉 채운다. 아이폰 15(393×759)면 장면이 약 555.
    장면 그림은 390×600을 가운데 기준으로 채우고(위아래 조금 잘림), 장면이 너무 낮아지거나 높아지면
@@ -260,6 +266,7 @@ const events = {
       onSolved() {
         setFlag('cabinetOpen');
         state.stats.solved.P8 ??= Date.now();
+        state.inventory = state.inventory.filter((id) => id !== 'key');
         const gained = ['flour', 'matches'].filter((id) => !state.inventory.includes(id));
         gained.forEach(addItem);
         save();
@@ -422,7 +429,7 @@ function onHotspot(id, e) {
   const res = act(id, use);
   save();
   const show = () => {
-    say(res.text ? lines[res.text] : '');
+    say(res.text ? line(res.text) : '');
     if (res.gained.length) {
       renderScene();
       flyToBag(id, res.gained);

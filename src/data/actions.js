@@ -133,6 +133,8 @@ export const actions = [
     { target: 'machine', requires: ['spoolsDone'], text: 'machine_open' },
     { target: 'machine', text: 'machine_after' },
     { target: 'spindle', use: 'spools', forbids: ['spoolsDone'], then: 'spools' },
+    { target: 'machine', use: 'spools', forbids: ['spoolsDone'], then: 'spools' },
+    { target: 'machine', requires: ['gotSpools'], forbids: ['spoolsDone'], text: 'machine_try' },
     { target: 'spindle', requires: ['spoolsDone'], text: 'spindle_done' },
     { target: 'spindle', requires: ['gotSpools'], then: 'spools' },
     { target: 'spindle', text: 'spindle_empty' },
@@ -151,7 +153,7 @@ export const actions = [
     { target: 'crayons', text: 'crayons74' },
 
     // 부엌: 풀 쑤기
-    { target: 'stove', use: 'matches', forbids: ['stoveLit'], sets: ['stoveLit'], text: 'stove_lit', then: 'fire' },
+    { target: 'stove', use: 'matches', forbids: ['stoveLit'], takes: ['matches'], sets: ['stoveLit'], text: 'stove_lit', then: 'fire' },
     { target: 'stove', requires: ['stoveLit'], text: 'stove_warm' },
     { target: 'stove', text: 'stove_cold' },
     { target: 'pot', use: 'flour', requires: ['stoveLit'], forbids: ['floured'], takes: ['flour'], sets: ['floured'], text: 'pot_flour' },

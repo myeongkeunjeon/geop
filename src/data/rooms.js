@@ -112,7 +112,7 @@ export const rooms = {
         { id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 },
         { id: 'flower', label: '꽃', x: 44, y: 80, w: 80, h: 140 },
         { id: 'machine', label: '재봉틀', x: 34, y: 280, w: 216, h: 196 },
-        { id: 'spindle', label: '실꽂이', x: 160, y: 250, w: 64, h: 40 },
+        { id: 'spindle', label: '실꽂이', x: 150, y: 236, w: 84, h: 56 },
       ],
     },
     C: {

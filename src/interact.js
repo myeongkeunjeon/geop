@@ -1,6 +1,7 @@
 // 조사/아이템 사용 처리 (데이터 기반)
 import { state, flag, setFlag, addItem, removeItem, hasItem } from './state.js';
 import { actions } from './data/actions.js';
+import { lines } from './data/text.js';
 
 function matches(rule, target, use) {
   return (
@@ -18,7 +19,9 @@ export function act(target, use = null) {
   const rule = actions.find((r) => matches(r, target, use));
   if (!rule) {
     if (use) state.stats.wrong[target] = (state.stats.wrong[target] || 0) + 1;
-    return { text: use ? 'use_nothing' : null, gained: [], then: null };
+    // 맞는 규칙이 없으면 아이템마다 다른 반응 (없으면 기본 문구)
+    const text = use ? (lines[`misuse_${use}`] ? `misuse_${use}` : 'use_nothing') : null;
+    return { text, gained: [], then: null };
   }
   if (rule.text === 'wont_budge') state.stats.wrong[target] = (state.stats.wrong[target] || 0) + 1;
 

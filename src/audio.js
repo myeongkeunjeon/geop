@@ -76,6 +76,27 @@ const sounds = {
     burst({ dur: 0.18, type: 'lowpass', freq: 500, gain: 0.2, at: 0.12 });
   },
   dial: () => tone(2400, 0.015, { gain: 0.04, type: 'square' }),
+  // 도장 / 문 닫힘
+  stamp: () => {
+    tone(90, 0.12, { gain: 0.2, to: 50 });
+    burst({ dur: 0.08, type: 'lowpass', freq: 800, gain: 0.2 });
+  },
+  // 현관문 노크: 쿵 쿵 쿵
+  knock: () => {
+    for (let i = 0; i < 3; i++) {
+      tone(95, 0.16, { gain: 0.35, to: 60, at: i * 0.55 });
+      burst({ dur: 0.1, type: 'lowpass', freq: 700, gain: 0.3, at: i * 0.55 });
+    }
+  },
+  // 엔딩 A: 솔로 쓸어내림
+  brush: () => {
+    for (let i = 0; i < 3; i++) burst({ dur: 0.7, type: 'bandpass', freq: 1800, freqTo: 900, q: 0.8, gain: 0.12, attack: 0.2, at: i * 0.8 });
+  },
+  // 엔딩 B: 모든 겹이 떨어짐
+  fall: () => {
+    for (let i = 0; i < 12; i++) burst({ dur: 0.08, type: 'highpass', freq: 1500 + Math.random() * 3000, gain: 0.16, at: 3.5 + i * 0.09 + Math.random() * 0.05 });
+    tone(80, 0.8, { gain: 0.25, to: 40, at: 4.6 });
+  },
   // 신문지: 바스락
   tearPaper: () => {
     for (let i = 0; i < 3; i++) burst({ dur: 0.03 + Math.random() * 0.03, type: 'highpass', freq: 2500 + Math.random() * 2500, gain: 0.18, at: i * 0.025 });

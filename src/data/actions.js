@@ -167,6 +167,23 @@ export const actions = [
     { target: 'height', text: 'height74' },
   ]),
 
-  // 아직 그리지 않은 시대: 귀퉁이를 누르면 시대 이동 띠
-  ...['bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
+  ...era('bare', [
+    // 엔딩 B: 은하의 그림을 문틈으로
+    { target: 'gap', use: 'drawing', takes: ['drawing'], places: 'drawing', text: 'drawing_placed', then: 'placed' },
+    { target: 'door', use: 'drawing', takes: ['drawing'], places: 'drawing', text: 'drawing_placed', then: 'placed' },
+    { target: 'gap', text: 'gap_bare' },
+    { target: 'door', text: 'door_bare' },
+    // 엔딩 A: 풀을 바르고, 새 벽지를 붙인다
+    { target: 'wallB', use: 'paste', forbids: ['pasted'], takes: ['paste'], sets: ['pasted'], text: 'paste_on', then: 'stir' },
+    { target: 'wallB', use: 'bag', requires: ['pasted'], then: 'endingA' },
+    { target: 'wallB', use: 'bag', text: 'bag_nopaste' },
+    { target: 'wallB', use: 'spray', text: 'names_spray' },
+    { target: 'wallB', use: 'hera', text: 'names_hera' },
+    { target: 'wallB', requires: ['pasted'], text: 'names_pasted' },
+    { target: 'wallB', text: 'names_look' },
+    { target: 'corner', then: 'strip' },
+    { target: 'window', text: 'window_bare' },
+    { target: 'claws', text: 'claws_bare' },
+    { target: 'pipe', text: 'pipe_bare' },
+  ]),
 ];

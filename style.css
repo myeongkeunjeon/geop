@@ -341,6 +341,45 @@ button {
 .crumb { transform-box: fill-box; transform-origin: center; animation: crumb 1.2s ease-in forwards; }
 @keyframes crumb { to { transform: translate(var(--dx), 140px) rotate(var(--rot)); opacity: 0; } }
 
+/* 임대차 계약서 */
+#contract { z-index: 60; background: rgba(5, 5, 6, .92); }
+.contract-paper {
+  width: 320px; padding: 26px 22px 20px; background: #ece5d2; color: #2a241a; border-radius: 2px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .6), inset 0 0 40px rgba(120, 100, 60, .25); font-family: var(--serif);
+  animation: cap-in .5s ease-out;
+}
+#contract.closing .contract-paper { animation: paper-away .7s ease-in forwards; }
+@keyframes paper-away { to { transform: translateY(40px) rotate(-3deg); opacity: 0; } }
+.contract-paper h2 { margin: 0 0 14px; text-align: center; font: 700 18px var(--serif); letter-spacing: .2em; }
+.contract-paper table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.contract-paper th, .contract-paper td { padding: 7px 6px; border: 1px solid #b9ae94; text-align: left; }
+.contract-paper th { width: 64px; background: #e1d8c0; font-weight: 400; }
+.special { margin: 14px 0; padding: 10px; border: 1px solid #8e3b33; color: #8e3b33; font-size: 14px; }
+.special b { margin-right: 8px; }
+.sign { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.sign input { flex: 1; min-width: 0; padding: 6px 4px; border: 0; border-bottom: 1px solid #2a241a; background: transparent; font: 20px var(--serif); color: #2a241a; -webkit-user-select: text; user-select: text; }
+.sign input:focus { outline: none; border-bottom-color: #8e3b33; }
+.sign span { color: #8a7e66; font-size: 12px; }
+.sign-btn { display: block; margin: 18px auto 0; padding: 10px 26px; border: 1px solid #2a241a; border-radius: 3px; font: 15px var(--serif); color: #2a241a; }
+.sign-btn:active { background: #d8cfb8; }
+.seen { margin: 12px 0 0; text-align: center; font-size: 11px; color: #8a7e66; }
+
+/* 엔딩 */
+.ending {
+  position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; background: #050506; text-align: center; animation: fade-in 1.6s ease-out;
+}
+.ending[hidden] { display: none; }
+.end-B { background: radial-gradient(circle at 50% 30%, #3a3324, #0b0a08 70%); }
+.end-art { width: 280px; flex: none; border-radius: 3px; opacity: 0; animation: appear 2.4s ease-out .4s forwards; box-shadow: 0 10px 30px rgba(0, 0, 0, .7); }
+.end-B .end-art { animation: appear 2s ease-out 9.5s forwards; }
+@keyframes appear { to { opacity: 1; } }
+.end-lines { min-height: 220px; margin-top: 22px; }
+.end-lines p { margin: 0 0 10px; font: 16px/1.6 var(--serif); color: #e6e1d6; animation: cap-in 1.2s ease-out; }
+.end-title { margin-top: 10px; font: 500 13px var(--sans); letter-spacing: .14em; color: var(--accent); opacity: 0; transition: opacity 1.2s; }
+.end-restart { margin-top: 18px; padding: 10px 26px; border: 1px solid #44444c; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 1.2s; }
+.ending.done .end-title, .ending.done .end-restart { opacity: 1; pointer-events: auto; }
+
 /* 시대 이동 띠: 뜯어 낸 겹들이 겹쳐 쌓인 모양 */
 .strip h2 { margin: 0 0 14px; font: 500 14px var(--sans); color: var(--ink-dim); letter-spacing: .06em; }
 .bands { display: flex; flex-direction: column; }

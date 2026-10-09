@@ -16,6 +16,8 @@ import { openScore } from './puzzles/score.js';
 import { peelArt1995 } from './art/1995.js';
 import { peelArt1974 } from './art/1974.js';
 import { openSpools, openNews } from './puzzles/spools.js';
+import { openContract, playEnding } from './ending.js';
+import { reset } from './state.js';
 import { initDebug } from './debug.js';
 
 const $ = (id) => document.getElementById(id);
@@ -244,7 +246,15 @@ const events = {
     state.stats.earlyPlace++;
     save();
   },
-  placed() {},
+  // 엔딩 B: 셋 다 제자리에 두면
+  placed() {
+    const p = state.placed;
+    if (p.notice && p.ring && p.drawing) setTimeout(() => triggerEnding('B'), 2200);
+  },
+  // 엔딩 A: 풀 바른 벽에 새 벽지
+  endingA() {
+    triggerEnding('A');
+  },
   // 1995 벽시계: 2시 13분 → 자개장 열쇠
   clock() {
     openClock({
@@ -342,6 +352,36 @@ function onPeeled(era) {
   renderTop();
   renderScene('fade');
   say(lines[`arrive${next}`] || '');
+  if (next === 'bare') arriveBare();
+}
+
+// 맨 벽 도착: 노크, 할머니 목소리. 엔딩 B 물건을 일찍 두려 했던 사람에겐 한 줄 더
+function arriveBare() {
+  setFlag('reachedBare');
+  save();
+  setTimeout(() => {
+    play('knock');
+    say(lines.bare_knock);
+  }, 3200);
+  setTimeout(() => {
+    const early = flag('triedNoticeEarly') || flag('triedRingEarly');
+    say(`${lines.bare_grandma}${early ? ` ${lines.bare_remember}` : ''}`);
+  }, 5600);
+}
+
+function triggerEnding(which) {
+  state.ending = which;
+  state.stats.endedAt = Date.now();
+  state.stats.ending = which;
+  save();
+  playEnding(which, {
+    lines,
+    player: state.playerName || lines.contract.placeholder,
+    onRestart() {
+      reset();
+      location.reload();
+    },
+  });
 }
 
 // 띠에서 고른 시대로 이동
@@ -477,11 +517,27 @@ installDefs();
 fit();
 refresh();
 
+// 처음 시작: 임대차 계약서에 서명한다 (진행 중인 저장도 이름이 없으면 한 번 받는다)
+if (!flag('signed')) {
+  const fresh = state.era === '2026' && state.inventory.length === 0 && state.unlockedEras.length === 1;
+  openContract({
+    t: lines.contract,
+    onSigned(name) {
+      state.playerName = name;
+      setFlag('signed');
+      state.stats.startedAt = fresh ? Date.now() : state.stats.startedAt;
+      save();
+      renderScene();
+      if (fresh) say(lines.intro);
+    },
+  });
+}
+
 initDebug({
   refresh,
   say,
   ending(which) {
-    say(`(엔딩 ${which}는 6단계에서 만든다.)`);
+    triggerEnding(which);
   },
 });
 

@@ -133,10 +133,23 @@ export const rooms = {
   },
 };
 
-// 아직 그리지 않은 시대: 벽 B 귀퉁이만 있어 시대 이동 띠로 돌아갈 수 있다
-for (const era of ['bare']) {
-  rooms[era] ??= { B: { hotspots: [{ id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 }] } };
-}
+// 맨 벽
+rooms.bare = {
+  A: {
+    hotspots: [
+      { id: 'door', label: '현관문', x: 146, y: 92, w: 108, h: 350 },
+      { id: 'gap', label: '문틈', x: 140, y: 440, w: 120, h: 44 },
+    ],
+  },
+  B: {
+    hotspots: [
+      { id: 'wallB', label: '이름들', x: 20, y: 40, w: 340, h: 420 },
+      { id: 'corner', label: '귀퉁이', x: 320, y: 20, w: 70, h: 90 },
+    ],
+  },
+  C: { hotspots: [{ id: 'window', label: '창문', x: 120, y: 80, w: 150, h: 130 }, { id: 'claws', label: '긁힌 자국', x: 60, y: 290, w: 280, h: 90 }] },
+  D: { hotspots: [{ id: 'pipe', label: '수도관', x: 30, y: 200, w: 200, h: 270 }] },
+};
 
 export function hotspotsFor(era, wall, flags) {
   const room = rooms[era]?.[wall];

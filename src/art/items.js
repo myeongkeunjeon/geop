@@ -9,7 +9,7 @@ const icons = {
   flashlight: s(`<rect x="10" y="20" width="22" height="9" rx="2" fill="#4a4d52"/><path d="M32 18h7l3 -3v19l-3 -3h-7z" fill="#6b6f75"/><rect x="16" y="22" width="5" height="5" rx="1" fill="#b9a77a"/>`),
   spray: s(`<rect x="14" y="20" width="16" height="20" rx="3" fill="#7fa6b8" opacity=".9"/><path d="M18 20v-6h10l6 3v3h-8v0" fill="#e0ddd5"/><rect x="18" y="26" width="8" height="10" fill="#fff" opacity=".25"/>`),
   ring: s(`<circle cx="24" cy="26" r="10" fill="none" stroke="#c9ccd1" stroke-width="3.4"/><circle cx="24" cy="26" r="10" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="4 30" opacity=".8"/>`),
-  hera: s(`<path d="M12 30l18 -14l8 4l-14 16z" fill="#b6b9bc"/><rect x="6" y="30" width="12" height="6" rx="2" fill="#7b5a37" transform="rotate(-38 12 33)"/>`),
+  hera: s(`<g transform="rotate(-24 24 24)"><rect x="20.5" y="4" width="7" height="18" rx="3" fill="#8a5a33"/><path d="M22 7v12" stroke="#a87448" stroke-width="1"/><rect x="18.5" y="21" width="11" height="5" rx="1" fill="#9ea3a6"/><path d="M17 26h14l7 16H10z" fill="#c4c9cc"/><path d="M10 42h28" stroke="#eef1f2" stroke-width="1.6"/><path d="M17 26l-7 16" stroke="#8d9295" stroke-width=".8"/></g>`),
   diary: s(`<rect x="12" y="8" width="24" height="32" rx="2" fill="#8fb0bf"/><rect x="12" y="8" width="4" height="32" fill="#6a8897"/><path d="M20 16h12M20 21h10" stroke="#e9eef0" stroke-width="1.4"/>`),
   key: s(`<circle cx="16" cy="24" r="6" fill="none" stroke="#c9a54a" stroke-width="3"/><path d="M22 24h18M34 24v5M38 24v4" stroke="#c9a54a" stroke-width="3"/>`),
   flour: s(`<path d="M14 14h20l2 26H12z" fill="#cdb98f"/><path d="M14 14l3 -4h14l3 4" fill="#b9a476"/><text x="24" y="32" text-anchor="middle" font-size="9" fill="#6d5a36">밀</text>`),

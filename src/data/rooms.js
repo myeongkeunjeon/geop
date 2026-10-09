@@ -80,7 +80,7 @@ export const rooms = {
         { id: 'clock', label: '벽시계', x: 34, y: 76, w: 88, h: 176 },
         { id: 'cabinet', label: '자개장', x: 208, y: 150, w: 178, h: 326, hideIf: 'cabinetOpen' },
         { id: 'cabinet', label: '자개장', x: 146, y: 150, w: 152, h: 326, showIf: 'cabinetOpen' },
-        { id: 'check', label: '드러난 귀퉁이', x: 300, y: 300, w: 90, h: 176, showIf: 'cabinetOpen' },
+        { id: 'check', label: '드러난 귀퉁이', x: 298, y: 146, w: 92, h: 330, showIf: 'cabinetOpen' },
       ],
     },
     C: {

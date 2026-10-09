@@ -101,6 +101,10 @@ export const actions = [
     { target: 'check', requires: ['scored'], text: 'check_scored' },
     { target: 'check', text: 'check_look' },
     { target: 'corner', use: 'spray', text: 'beads' },
+    { target: 'corner', use: 'cutter', requires: ['cabinetOpen'], text: 'cutter95_upper' },
+    { target: 'corner', use: 'cutter', text: 'cutter95_hidden' },
+    { target: 'corner', use: 'hera', text: 'hera95' },
+    { target: 'cabinet', use: 'cutter', text: 'cutter95_cabinet' },
     { target: 'corner', then: 'strip' },
 
     // 창문: 결혼사진, TV, 빈 반지함

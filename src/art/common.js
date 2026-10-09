@@ -37,8 +37,9 @@ export function jag(points, amp, seed, step = 7) {
 
 export const pts = (list) => list.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
 
-// 벽 + 걸레받이 + 장판 + 천장 불빛
-export function shell(era, { cornerRight = false, cornerLeft = false } = {}) {
+// 뒷벽 + 걸레받이. 바닥·천장·옆벽은 room.js가 원근으로 그린다.
+// 양쪽 끝은 방 모서리라 어둡게 가라앉힌다.
+export function shell(era) {
   return `
   <rect width="${W}" height="${FLOOR_Y}" fill="url(#${eraWall[era]})"/>
   <rect width="${W}" height="${FLOOR_Y}" filter="url(#grime)" opacity=".3"/>
@@ -46,13 +47,17 @@ export function shell(era, { cornerRight = false, cornerLeft = false } = {}) {
   <rect y="${FLOOR_Y - 170}" width="${W}" height="170" fill="url(#scuff)"/>
   <rect width="${W}" height="${FLOOR_Y}" fill="url(#bulb)"/>
   <rect width="${W}" height="60" fill="url(#ceilShade)"/>
-  <rect y="${FLOOR_Y}" width="${W}" height="${H - FLOOR_Y}" fill="url(#pFloor)"/>
-  <rect y="${FLOOR_Y}" width="${W}" height="${H - FLOOR_Y}" fill="url(#floorShade)"/>
   <rect y="${FLOOR_Y - 14}" width="${W}" height="14" fill="#5a5247"/>
   <rect y="${FLOOR_Y - 14}" width="${W}" height="2" fill="#7a7266"/>
-  <rect y="${FLOOR_Y}" width="${W}" height="3" fill="#000" opacity=".4"/>
-  ${cornerRight ? `<rect x="${W - 60}" width="60" height="${H}" fill="url(#cornerR)" opacity=".7"/><path d="M${W - 0.5} 0V${H}" stroke="#000" stroke-opacity=".45"/>` : ''}
-  ${cornerLeft ? `<rect width="60" height="${H}" fill="url(#cornerL)" opacity=".7"/><path d="M.5 0V${H}" stroke="#000" stroke-opacity=".45"/>` : ''}`;
+  <rect x="${W - 46}" width="46" height="${FLOOR_Y}" fill="url(#cornerR)" opacity=".75"/>
+  <rect width="46" height="${FLOOR_Y}" fill="url(#cornerL)" opacity=".75"/>`;
+}
+
+// 물건의 옆면·윗면·밑면: 앞 모서리를 소실점(벽 좌표) 쪽으로 depth만큼 끌어 면을 만든다
+export const VP = [195, 295];
+export function face(edge, depth, fill, extra = '') {
+  const back = edge.map(([x, y]) => [x + (VP[0] - x) * depth, y + (VP[1] - y) * depth]);
+  return `<polygon points="${pts([...edge, ...back.reverse()])}" fill="${fill}" ${extra}/>`;
 }
 
 // 필름 입자, 탁한 녹색, 가벼운 비네트. 화면 전체를 누르지 않고 결만 더한다

@@ -1,9 +1,9 @@
 // 2026 벽 그림. 흰 실크벽지, 차가운 회색. 화면을 어둡게 누르지 않고 물건과 벽의 낡음으로 음산하게.
 import {
-  W, H, FLOOR_Y, shell, mood, moldPatch, waterStain, ceilingLeak, seams, bubble, nailHole,
+  W, H, FLOOR_Y, shell, face, moldPatch, waterStain, ceilingLeak, seams, bubble, nailHole,
   ghostFrame, crack, scribble, tally, jag, pts, rng, leakPath,
 } from './common.js';
-import { lamp, motes, fly, drip, doorFeet, breathe, creep, neighborLight } from './fx.js';
+import { fly, drip, doorFeet, breathe, creep, neighborLight } from './fx.js';
 
 /* ================= 벽 A · 현관 ================= */
 
@@ -11,6 +11,9 @@ function door() {
   return `
   <rect x="140" y="88" width="120" height="390" fill="#2c302d"/>
   <rect x="150" y="98" width="100" height="374" fill="url(#steel)"/>
+  ${face([[150, 98], [150, 472]], 0.07, '#141716')}
+  ${face([[250, 98], [250, 472]], 0.07, '#1c201e')}
+  ${face([[150, 98], [250, 98]], 0.07, '#0e100f')}
   <rect x="160" y="112" width="80" height="150" fill="none" stroke="#000" stroke-opacity=".28"/>
   <rect x="161" y="113" width="80" height="150" fill="none" stroke="#fff" stroke-opacity=".08"/>
   <rect x="160" y="290" width="80" height="166" fill="none" stroke="#000" stroke-opacity=".28"/>
@@ -41,6 +44,8 @@ function shoeCabinet(f) {
        <g transform="translate(84 282) rotate(5)"><rect width="36" height="13" fill="#ebe6d6"/><path d="M4 4h24M4 8h17" stroke="#6d6655" stroke-width=".8"/></g>`;
   return `
   <rect x="22" y="300" width="110" height="176" fill="#000" opacity=".25" transform="translate(4 2)" filter="url(#soft)"/>
+  ${face([[136, 292], [136, 474]], 0.13, '#4a3e30')}
+  ${face([[132, 302], [132, 472]], 0.12, 'url(#sideFace)')}
   <rect x="18" y="292" width="118" height="10" fill="#8d7a60"/>
   <rect x="18" y="292" width="118" height="2" fill="#a8977c"/>
   <rect x="22" y="302" width="110" height="170" fill="url(#wood)"/>
@@ -63,6 +68,8 @@ function mailbox(f) {
   return `
   ${mail}
   <rect x="300" y="266" width="7" height="58" fill="url(#rust)" filter="url(#soft1)"/>
+  ${face([[270, 210], [270, 268]], 0.12, '#404543')}
+  ${face([[270, 268], [350, 268]], 0.12, '#2c302e')}
   <rect x="270" y="208" width="80" height="60" rx="3" fill="#6f7572"/>
   <rect x="270" y="208" width="80" height="14" rx="3" fill="#5c625f"/>
   <rect x="282" y="228" width="56" height="4" rx="2" fill="#1a1d1c"/>
@@ -100,7 +107,7 @@ function shoes() {
 
 function wallA(f) {
   return `
-  ${shell('2026', { cornerLeft: true, cornerRight: true })}
+  ${shell('2026')}
   ${seams([96, 292], 61)}
   ${waterStain(322, 46, 46, 22)}
   ${ceilingLeak(330, 130, 5)}
@@ -112,14 +119,15 @@ function wallA(f) {
   ${scribble('2:13', 44, 280, { size: 12, rot: -2, opacity: 0.3 })}
   ${scribble('2:13', 96, 246, { size: 9, rot: 8, opacity: 0.32 })}
   ${scribble('2:13', 106, 272, { size: 10, rot: -9, opacity: 0.25 })}
-  <polygon points="122,${FLOOR_Y} 278,${FLOOR_Y} 300,${H} 100,${H}" fill="url(#pEntry)"/>
-  <polygon points="122,${FLOOR_Y} 278,${FLOOR_Y} 300,${H} 100,${H}" fill="url(#floorShade)"/>
+  <polygon points="140,${FLOOR_Y} 260,${FLOOR_Y} 283,${H} 117,${H}" fill="url(#pEntry)"/>
+  <polygon points="140,${FLOOR_Y} 260,${FLOOR_Y} 283,${H} 117,${H}" fill="#000" opacity=".25"/>
+  <rect x="140" y="${FLOOR_Y}" width="120" height="4" fill="#000" opacity=".45"/>
   ${door()}
   ${shoes()}
   ${shoeCabinet(f)}
   ${mailbox(f)}
   ${wallpaperBag(f)}
-  ${mood(1)}`;
+  `;
 }
 
 /* ================= 벽 B · 귀퉁이 (방 시안) ================= */
@@ -205,7 +213,7 @@ function box(open) {
 function wallB(f) {
   const { l2014, l1995, l1974, bare } = tear;
   return `
-  ${shell('2026', { cornerRight: true })}
+  ${shell('2026')}
   ${seams([186], 81)}
   ${waterStain(150, 70, 66, 30)}
   ${ceilingLeak(118, 92, 3)}
@@ -254,7 +262,7 @@ function wallB(f) {
     <path d="M300 120q20 10 10 50M334 214q10 14 4 30" stroke="#fff" stroke-width="1.2" opacity=".25" fill="none"/>` : ''}
 
   ${box(f.boxOpen)}
-  ${mood(1)}`;
+  `;
 }
 
 /* ================= 벽 C · 창문 ================= */
@@ -272,6 +280,9 @@ function windowFrame() {
   <rect x="226" y="98" width="24" height="32" fill="#6b5a32" opacity=".3"/>
   <path d="${bars}M110 124H280M110 196H280" stroke="#070909" stroke-width="3"/>
   <rect x="193" y="70" width="4" height="170" fill="#b2b3ae"/>
+  ${face([[110, 70], [110, 240]], 0.14, '#8d8b83')}
+  ${face([[280, 70], [280, 240]], 0.14, '#a3a198')}
+  ${face([[110, 70], [280, 70]], 0.14, '#6f6d66')}
   <polygon points="118,70 160,70 118,150" fill="#fff" opacity=".05"/>
   <path d="M130 200v34M146 214v22M214 190v46M262 206v30M240 222v14" stroke="#cfd8da" stroke-width="1" opacity=".25"/>
   ${moldPatch(116, 236, 18, 12, 21, '#1b231d')}
@@ -302,6 +313,7 @@ function mattress(f) {
   return `
   <!-- 벽에 세워 둔 매트리스 (밑면에 곰팡이) -->
   <rect x="24" y="202" width="90" height="280" rx="6" fill="#000" opacity=".35" transform="translate(6 2) rotate(-3 66 340)" filter="url(#soft)"/>
+  <g transform="rotate(-3 66 340)">${face([[112, 206], [112, 476]], 0.09, '#5f5a4f')}</g>
   <rect x="20" y="200" width="92" height="282" rx="10" fill="#958f80" transform="rotate(-3 66 340)"/>
   <g transform="rotate(-3 66 340)">${moldPatch(64, 330, 30, 14, 41, '#2a3328')}${moldPatch(56, 430, 24, 10, 42, '#2a3328')}</g>
   <!-- 매트리스가 있던 자리와 들뜬 장판 -->
@@ -316,7 +328,7 @@ function mattress(f) {
 
 function wallC(f) {
   return `
-  ${shell('2026', { cornerLeft: true, cornerRight: true })}
+  ${shell('2026')}
   ${seams([70, 318], 71)}
   ${moldPatch(372, 14, 30, 16, 24)}
   ${waterStain(52, 120, 30, 46)}
@@ -326,7 +338,7 @@ function wallC(f) {
   ${tally(306, 442, 2, 32)}
   ${windowFrame()}
   ${mattress(f)}
-  ${mood(1)}`;
+  `;
 }
 
 /* ================= 벽 D · 부엌 ================= */
@@ -334,6 +346,7 @@ function wallC(f) {
 function upperCabinet() {
   return `
   <rect x="28" y="108" width="196" height="98" fill="#000" opacity=".3" transform="translate(3 4)" filter="url(#soft)"/>
+  ${face([[28, 206], [226, 210]], 0.12, '#2e261d')}
   <rect x="28" y="108" width="196" height="98" fill="url(#wood)"/>
   <rect x="28" y="108" width="98" height="98" fill="none" stroke="#3b3126" stroke-width="1.4"/>
   <!-- 오른쪽 문이 조금 열려 있다. 안은 새까맣다 -->
@@ -353,6 +366,8 @@ function sinkUnit() {
   <ellipse cx="170" cy="273" rx="1.8" ry="2.6" fill="#9fc0c8" opacity=".7"/>
   <rect x="22" y="288" width="208" height="14" fill="#a9aca9"/>
   <rect x="22" y="288" width="208" height="2" fill="#d8dad8"/>
+  ${face([[220, 302], [220, 472]], 0.12, '#463a2c')}
+  ${face([[230, 288], [230, 302]], 0.13, '#7d807d')}
   <rect x="30" y="302" width="190" height="170" fill="url(#wood)"/>
   <path d="M125 306V470" stroke="#3b3126" stroke-width="1.6"/>
   <path d="M124 420l2 50" stroke="#050403" stroke-width="3"/>
@@ -364,6 +379,8 @@ function sinkUnit() {
 function fridge() {
   return `
   <rect x="254" y="144" width="116" height="336" rx="8" fill="#000" opacity=".35" transform="translate(4 2)" filter="url(#soft)"/>
+  ${face([[254, 146], [254, 472]], 0.16, '#77746a')}
+  ${face([[254, 146], [254, 472]], 0.16, 'url(#sideFace)', 'opacity=".5"')}
   <rect x="252" y="140" width="116" height="336" rx="8" fill="url(#enamel)"/>
   <path d="M252 232H368" stroke="#7d7a70" stroke-width="1.6"/>
   <rect x="258" y="162" width="5" height="50" rx="2" fill="#8d8a80"/>
@@ -392,7 +409,7 @@ function calendar() {
 
 function wallD(f) {
   return `
-  ${shell('2026', { cornerLeft: true, cornerRight: true })}
+  ${shell('2026')}
   ${seams([240], 91)}
   ${waterStain(120, 46, 56, 22)}
   ${ceilingLeak(96, 100, 11)}
@@ -402,7 +419,7 @@ function wallD(f) {
   ${upperCabinet()}
   ${sinkUnit(f)}
   ${fridge()}
-  ${mood(1)}`;
+  `;
 }
 
 /* ================= 움직이는 층 ================= */
@@ -440,12 +457,13 @@ const fxWall = {
     ${fly('M240 120C236 160 248 200 240 246', 14, 2)}`,
 };
 
+// art: 벽 좌표 정지 그림 / fx: 벽 좌표 움직임 / after: 정전 어둠 위에 남는 것 / dark: 정전
 export function draw2026(wall, state) {
   const f = state.flags;
-  const art = { A: wallA, B: wallB, C: wallC, D: wallD }[wall](f);
-  let fx = `${lamp({ off: f.blackout })}${f.blackout ? '' : motes(wall.charCodeAt(0))}${fxWall[wall]()}`;
-  // 정전: 2단계에서 손전등 원형 마스크로 바뀐다. 현관 문틈 불빛만은 꺼지지 않는다
-  if (f.blackout) fx += `<rect width="${W}" height="${H}" fill="#000" opacity=".82"/>${wall === 'A' ? doorFeet() : ''}`;
-  else if (wall === 'A') fx += doorFeet();
-  return { art, fx };
+  return {
+    art: { A: wallA, B: wallB, C: wallC, D: wallD }[wall](f),
+    fx: fxWall[wall](),
+    after: wall === 'A' ? doorFeet() : '', // 현관 문틈 불빛은 정전에도 꺼지지 않는다
+    dark: !!f.blackout,
+  };
 }

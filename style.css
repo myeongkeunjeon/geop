@@ -105,15 +105,18 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .fx-swing, .fx-flicker, .fx-sway { animation: none; }
 }
-.layer.in-from-right { animation: in-right .28s ease-out; }
-.layer.in-from-left  { animation: in-left .28s ease-out; }
-.layer.out-to-left   { animation: out-left .28s ease-out forwards; }
-.layer.out-to-right  { animation: out-right .28s ease-out forwards; }
+/* 벽 돌리기: 고개를 돌리듯 방이 회전한다 */
+#layers { perspective: 620px; }
+.layer { backface-visibility: hidden; }
+.layer.in-from-right { animation: in-right .48s cubic-bezier(.3, .1, .2, 1); }
+.layer.in-from-left  { animation: in-left .48s cubic-bezier(.3, .1, .2, 1); }
+.layer.out-to-left   { animation: out-left .48s cubic-bezier(.3, .1, .2, 1) forwards; }
+.layer.out-to-right  { animation: out-right .48s cubic-bezier(.3, .1, .2, 1) forwards; }
 .layer.fade-in       { animation: fade-in .6s ease-out; }
-@keyframes in-right  { from { transform: translateX(100%); } }
-@keyframes in-left   { from { transform: translateX(-100%); } }
-@keyframes out-left  { to { transform: translateX(-100%); } }
-@keyframes out-right { to { transform: translateX(100%); } }
+@keyframes in-right  { from { transform: translateX(70%) rotateY(-62deg); filter: brightness(.35); } }
+@keyframes in-left   { from { transform: translateX(-70%) rotateY(62deg); filter: brightness(.35); } }
+@keyframes out-left  { to { transform: translateX(-70%) rotateY(62deg); filter: brightness(.35); } }
+@keyframes out-right { to { transform: translateX(70%) rotateY(-62deg); filter: brightness(.35); } }
 @keyframes fade-in   { from { opacity: 0; } }
 
 .hs { fill: transparent; cursor: pointer; }

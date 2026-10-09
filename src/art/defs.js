@@ -177,6 +177,33 @@ const defs = /* svg */ `
     <stop offset="0" stop-color="#958e7e"/>
     <stop offset="1" stop-color="#7c7566"/>
   </linearGradient>
+  <!-- 원근 방 (room.js) -->
+  <linearGradient id="sideL" x1="1" y1="0" x2="0" y2="0">
+    <stop offset="0" stop-color="#0a1312" stop-opacity=".38"/>
+    <stop offset="1" stop-color="#0a1312" stop-opacity=".7"/>
+  </linearGradient>
+  <linearGradient id="sideR" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#0a1312" stop-opacity=".38"/>
+    <stop offset="1" stop-color="#0a1312" stop-opacity=".7"/>
+  </linearGradient>
+  <linearGradient id="ceil" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#1b1c1a"/>
+    <stop offset="1" stop-color="#3b3a35"/>
+  </linearGradient>
+  <linearGradient id="floorDepth" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#0a0806" stop-opacity=".55"/>
+    <stop offset=".12" stop-color="#0a0806" stop-opacity=".1"/>
+    <stop offset=".55" stop-color="#0a0806" stop-opacity=".05"/>
+    <stop offset="1" stop-color="#0a0806" stop-opacity=".7"/>
+  </linearGradient>
+  <radialGradient id="floorPool" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#ffe2a0" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="sideFace" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#000" stop-opacity=".45"/>
+    <stop offset="1" stop-color="#000" stop-opacity=".6"/>
+  </linearGradient>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

@@ -67,6 +67,11 @@ export const rooms = {
   },
 };
 
+// 아직 그리지 않은 시대: 벽 B 귀퉁이만 있어 시대 이동 띠로 돌아갈 수 있다
+for (const era of ['1995', '1974', 'bare']) {
+  rooms[era] ??= { B: { hotspots: [{ id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 }] } };
+}
+
 export function hotspotsFor(era, wall, flags) {
   const room = rooms[era]?.[wall];
   if (!room) return [];

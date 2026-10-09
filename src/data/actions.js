@@ -80,4 +80,7 @@ export const actions = [
     { target: 'noodles', text: 'noodles14' },
     { target: 'fridge', text: 'fridge14' },
   ]),
+
+  // 아직 그리지 않은 시대: 귀퉁이를 누르면 시대 이동 띠
+  ...['1995', '1974', 'bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
 ];

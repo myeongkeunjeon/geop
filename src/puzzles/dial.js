@@ -71,7 +71,7 @@ export function openRadio({ target, story, staticText, nearText, onHeard }) {
     update();
   });
 
-  // 눈금 끌기: 4px마다 0.1
+  // 눈금 끌기: 바늘이 손가락을 따라간다 (4px마다 0.1)
   const win = $('.radio-window');
   let drag = null;
   win.addEventListener('pointerdown', (e) => {
@@ -81,7 +81,7 @@ export function openRadio({ target, story, staticText, nearText, onHeard }) {
   win.addEventListener('pointermove', (e) => {
     if (!drag) return;
     const before = freq;
-    freq = drag.f - (e.clientX - drag.x) / 40;
+    freq = drag.f + (e.clientX - drag.x) / 40;
     update();
     if (freq !== before) play('dial');
   });

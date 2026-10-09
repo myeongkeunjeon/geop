@@ -14,6 +14,8 @@ import { openRadio, openLock, openClock } from './puzzles/dial.js';
 import { openCrane } from './puzzles/crane.js';
 import { openScore } from './puzzles/score.js';
 import { peelArt1995 } from './art/1995.js';
+import { peelArt1974 } from './art/1974.js';
+import { openSpools, openNews } from './puzzles/spools.js';
 import { initDebug } from './debug.js';
 
 const $ = (id) => document.getElementById(id);
@@ -268,6 +270,43 @@ const events = {
       },
     });
   },
+  // 1974 연탄불, 풀 쑤기
+  fire() {
+    play('fire');
+  },
+  stir() {
+    play('stir');
+  },
+  // 1974 실꽂이: 빨강·노랑·초록 → 은하의 그림
+  spools() {
+    openSpools({
+      order: ['red', 'yellow', 'green'],
+      wrongText: lines.spools_wrong,
+      onWrong() {
+        state.stats.wrong.spools = (state.stats.wrong.spools || 0) + 1;
+        save();
+      },
+      onSolved() {
+        setFlag('spoolsDone');
+        state.stats.solved.P11 ??= Date.now();
+        state.inventory = state.inventory.filter((id) => id !== 'spools');
+        if (!state.inventory.includes('drawing')) addItem('drawing');
+        save();
+        renderScene();
+        flyToBag('machine', ['drawing']);
+        say(lines.spools_open);
+      },
+    });
+  },
+  // 1974 신문 기사를 읽고 나면 뜯을 수 있다
+  news() {
+    openNews({
+      lines: lines.news,
+      onClose() {
+        events.peel();
+      },
+    });
+  },
   // 1995 비닐 칼집
   score() {
     openScore({
@@ -313,6 +352,7 @@ const peelCfg = {
   2026: { r0: 112, speed: 1.1, curl: 'url(#flapBack)', sound: 'tear', ...peelArt2026 },
   2014: peelArt2014,
   1995: peelArt1995,
+  1974: peelArt1974,
 };
 initPeel({
   current: () => (state.wall === 'B' && flag(`peel_${state.era}`) && peelCfg[state.era] ? { era: state.era, ...peelCfg[state.era] } : null),

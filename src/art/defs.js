@@ -275,6 +275,30 @@ const defs = /* svg */ `
   <pattern id="pNoise" width="6" height="4" patternUnits="userSpaceOnUse">
     <rect width="6" height="4" fill="#8a9593"/><rect width="2" height="1" fill="#e1e8e6"/><rect x="3" y="2" width="2" height="1" fill="#2b3231"/><rect x="1" y="3" width="1" height="1" fill="#d0d7d5"/>
   </pattern>
+  <!-- 1974 -->
+  <linearGradient id="iron" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#1b1a19"/>
+    <stop offset=".5" stop-color="#3a3836"/>
+    <stop offset="1" stop-color="#171615"/>
+  </linearGradient>
+  <linearGradient id="tin" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#9c9686"/>
+    <stop offset=".4" stop-color="#d9d3c0"/>
+    <stop offset="1" stop-color="#8a8475"/>
+  </linearGradient>
+  <radialGradient id="ember" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#ffd27a" stop-opacity=".95"/>
+    <stop offset=".5" stop-color="#ff7a2a" stop-opacity=".6"/>
+    <stop offset="1" stop-color="#ff4a10" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="flapBack74" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#d8cfb4"/>
+    <stop offset=".6" stop-color="#b3a684"/>
+    <stop offset="1" stop-color="#7e7258"/>
+  </linearGradient>
+  <pattern id="pHanji" width="20" height="20" patternUnits="userSpaceOnUse">
+    <rect width="20" height="20" fill="#e6dcc2"/><path d="M0 7q10 -3 20 1M3 15q8 2 17 -1" stroke="#cfc3a2" stroke-width=".6" fill="none"/>
+  </pattern>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

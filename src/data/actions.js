@@ -120,6 +120,51 @@ export const actions = [
     { target: 'stove', text: 'stove95' },
   ]),
 
+  ...era('1974', [
+    // 현관
+    { target: 'door', use: 'drawing', text: 'drawing_too_early' },
+    { target: 'door', text: 'door74' },
+    { target: 'hearth', text: 'hearth74' },
+    { target: 'briquettes', text: 'briquettes74' },
+    { target: 'step', text: 'step74' },
+
+    // 재봉틀과 실꽂이
+    { target: 'machine', forbids: ['gotSpools'], gives: ['spools'], sets: ['gotSpools'], text: 'machine_doodle' },
+    { target: 'machine', requires: ['spoolsDone'], text: 'machine_open' },
+    { target: 'machine', text: 'machine_after' },
+    { target: 'spindle', use: 'spools', forbids: ['spoolsDone'], then: 'spools' },
+    { target: 'spindle', requires: ['spoolsDone'], text: 'spindle_done' },
+    { target: 'spindle', requires: ['gotSpools'], then: 'spools' },
+    { target: 'spindle', text: 'spindle_empty' },
+    { target: 'flower', text: 'flower74' },
+
+    // 신문지 초배
+    { target: 'corner', use: 'hera', forbids: ['w74Wet'], text: 'wont_budge' },
+    { target: 'corner', use: 'spray', forbids: ['w74Wet'], sets: ['w74Wet'], text: 'news_wet', then: 'spray' },
+    { target: 'corner', use: 'hera', requires: ['w74Wet'], forbids: ['peel_1974', 'peeled_1974'], text: 'news_lift', then: 'news' },
+    { target: 'corner', use: 'cutter', text: 'cutter74' },
+    { target: 'corner', then: 'strip' },
+
+    // 창문
+    { target: 'window', text: 'window74' },
+    { target: 'quilt', text: 'quilt74' },
+    { target: 'crayons', text: 'crayons74' },
+
+    // 부엌: 풀 쑤기
+    { target: 'stove', use: 'matches', forbids: ['stoveLit'], sets: ['stoveLit'], text: 'stove_lit', then: 'fire' },
+    { target: 'stove', requires: ['stoveLit'], text: 'stove_warm' },
+    { target: 'stove', text: 'stove_cold' },
+    { target: 'pot', use: 'flour', requires: ['stoveLit'], forbids: ['floured'], takes: ['flour'], sets: ['floured'], text: 'pot_flour' },
+    { target: 'pot', use: 'flour', text: 'pot_noflame' },
+    { target: 'pot', use: 'spray', requires: ['floured'], forbids: ['gotPaste'], gives: ['paste'], sets: ['gotPaste'], text: 'pot_paste', then: 'stir', solve: 'P10' },
+    { target: 'pot', use: 'spray', text: 'pot_water' },
+    { target: 'pot', requires: ['gotPaste'], text: 'pot_after' },
+    { target: 'pot', requires: ['floured'], text: 'pot_floured' },
+    { target: 'pot', text: 'pot_empty' },
+    { target: 'table', text: 'table74' },
+    { target: 'height', text: 'height74' },
+  ]),
+
   // 아직 그리지 않은 시대: 귀퉁이를 누르면 시대 이동 띠
-  ...['1974', 'bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
+  ...['bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
 ];

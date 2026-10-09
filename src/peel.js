@@ -77,6 +77,7 @@ export function mountPeel(layer) {
       <path class="p-curl" fill="${cfg.curl}" fill-rule="evenodd"/>
       <path class="p-fiber" stroke="#f6f3ec" stroke-width=".8" stroke-linecap="round"/>
     </g>
+    <g class="p-crumbs"></g>
     ${cfg.front()}
   </g></svg>`;
   el = t.firstElementChild;
@@ -96,6 +97,7 @@ function setR(v) {
   r = Math.min(Math.max(v, R0), RF + 140);
   if (r - lastSound > 9) {
     play(cfg?.sound || 'tear');
+    if (cfg?.crumbs) crumble();
     lastSound = r;
   } else if (r < lastSound) lastSound = r;
   if (r - lastBuzz > 34) {
@@ -103,6 +105,27 @@ function setR(v) {
     lastBuzz = r;
   } else if (r < lastBuzz) lastBuzz = r;
   draw();
+}
+
+// 신문지: 찢긴 가장자리에서 종잇조각이 부서져 흩날린다
+function crumble() {
+  const g = el?.querySelector('.p-crumbs');
+  if (!g) return;
+  for (let k = 0; k < 2; k++) {
+    const a = Math.PI * (0.5 + Math.random());
+    const x = C[0] + Math.cos(a) * r;
+    const y = C[1] + Math.sin(a) * r;
+    if (x < 0 || y < 0 || y > 470) continue;
+    const s = 3 + Math.random() * 5;
+    const bit = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    bit.setAttribute('points', `${x},${y} ${x + s},${y + s * 0.3} ${x + s * 0.6},${y + s}`);
+    bit.setAttribute('fill', cfg.crumbs);
+    bit.setAttribute('class', 'crumb');
+    bit.style.setProperty('--dx', `${(Math.random() - 0.5) * 60}px`);
+    bit.style.setProperty('--rot', `${(Math.random() - 0.5) * 540}deg`);
+    g.append(bit);
+    setTimeout(() => bit.remove(), 1300);
+  }
 }
 
 function animateTo(to, ms, then) {

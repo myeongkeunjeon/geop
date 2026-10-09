@@ -98,10 +98,43 @@ export const rooms = {
       ],
     },
   },
+  1974: {
+    A: {
+      hotspots: [
+        { id: 'door', label: '방문', x: 146, y: 92, w: 108, h: 380 },
+        { id: 'hearth', label: '부뚜막', x: 14, y: 340, w: 126, h: 136 },
+        { id: 'briquettes', label: '연탄', x: 286, y: 398, w: 84, h: 74 },
+        { id: 'step', label: '댓돌', x: 110, y: 480, w: 190, h: 50 },
+      ],
+    },
+    B: {
+      hotspots: [
+        { id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 },
+        { id: 'flower', label: '꽃', x: 44, y: 80, w: 80, h: 140 },
+        { id: 'machine', label: '재봉틀', x: 34, y: 280, w: 216, h: 196 },
+        { id: 'spindle', label: '실꽂이', x: 160, y: 250, w: 64, h: 40 },
+      ],
+    },
+    C: {
+      hotspots: [
+        { id: 'window', label: '창문', x: 112, y: 70, w: 166, h: 150 },
+        { id: 'quilt', label: '이불장', x: 176, y: 230, w: 184, h: 246 },
+        { id: 'crayons', label: '낙서', x: 30, y: 350, w: 130, h: 104 },
+      ],
+    },
+    D: {
+      hotspots: [
+        { id: 'pot', label: '냄비', x: 150, y: 270, w: 100, h: 50 },
+        { id: 'stove', label: '연탄난로', x: 150, y: 322, w: 100, h: 152 },
+        { id: 'table', label: '밥상', x: 20, y: 420, w: 90, h: 58 },
+        { id: 'height', label: '키 눈금', x: 314, y: 316, w: 50, h: 60 },
+      ],
+    },
+  },
 };
 
 // 아직 그리지 않은 시대: 벽 B 귀퉁이만 있어 시대 이동 띠로 돌아갈 수 있다
-for (const era of ['1974', 'bare']) {
+for (const era of ['bare']) {
   rooms[era] ??= { B: { hotspots: [{ id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 }] } };
 }
 

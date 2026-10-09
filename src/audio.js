@@ -76,6 +76,20 @@ const sounds = {
     burst({ dur: 0.18, type: 'lowpass', freq: 500, gain: 0.2, at: 0.12 });
   },
   dial: () => tone(2400, 0.015, { gain: 0.04, type: 'square' }),
+  // 신문지: 바스락
+  tearPaper: () => {
+    for (let i = 0; i < 3; i++) burst({ dur: 0.03 + Math.random() * 0.03, type: 'highpass', freq: 2500 + Math.random() * 2500, gain: 0.18, at: i * 0.025 });
+  },
+  paper: () => burst({ dur: 0.4, type: 'highpass', freq: 3000, gain: 0.12, attack: 0.05 }),
+  // 성냥과 연탄불: 치익, 화르르
+  fire: () => {
+    burst({ dur: 0.25, type: 'highpass', freq: 3500, gain: 0.22 });
+    burst({ dur: 1.2, type: 'lowpass', freq: 600, gain: 0.18, attack: 0.3, at: 0.2 });
+  },
+  // 풀 젓기: 질척
+  stir: () => {
+    for (let i = 0; i < 4; i++) burst({ dur: 0.15, type: 'lowpass', freq: 500, gain: 0.2, at: i * 0.22 });
+  },
   // 비닐: 칼집 따라 바삭하게
   tearVinyl: () => burst({ dur: 0.06 + Math.random() * 0.05, type: 'highpass', freq: 1400 + Math.random() * 900, q: 1.2, gain: 0.24 }),
   // 커터칼 칼집: 쓱

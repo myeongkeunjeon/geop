@@ -58,7 +58,7 @@ export function shell(era, { cornerRight = false, cornerLeft = false } = {}) {
 // 필름 입자, 탁한 녹색, 가벼운 비네트. 화면 전체를 누르지 않고 결만 더한다
 export function mood(strength = 1) {
   return `
-  <rect width="${W}" height="${H}" fill="#2a3a24" opacity="${0.1 * strength}"/>
+  <rect width="${W}" height="${H}" fill="#1c3532" opacity="${0.13 * strength}"/>
   <rect width="${W}" height="${H}" filter="url(#grain)" opacity="${0.2 * strength}"/>
   <rect width="${W}" height="${H}" fill="url(#vignette)"/>`;
 }
@@ -91,8 +91,8 @@ export function waterStain(cx, cy, rx, ry) {
   </g>`;
 }
 
-// 천장에서 흘러내린 누런 물줄기
-export function ceilingLeak(x, len, seed) {
+// 천장에서 흘러내린 누런 물줄기. 끝점(ex, ey)은 fx 물방울이 쓴다
+export function leakPath(x, len, seed) {
   const r = rng(seed);
   let d = `M${x} 0`;
   let cx = x;
@@ -100,10 +100,15 @@ export function ceilingLeak(x, len, seed) {
     cx += (r() - 0.5) * 6;
     d += ` L${cx.toFixed(1)} ${y}`;
   }
+  return { d, ex: +cx.toFixed(1), ey: len + 3 };
+}
+
+export function ceilingLeak(x, len, seed) {
+  const { d, ex, ey } = leakPath(x, len, seed);
   return `<g opacity=".55">
     <path d="${d}" stroke="#8a7140" stroke-width="7" fill="none" opacity=".35" filter="url(#soft1)"/>
     <path d="${d}" stroke="#6e5530" stroke-width="1.6" fill="none"/>
-    <ellipse cx="${cx.toFixed(1)}" cy="${len + 3}" rx="3" ry="4.5" fill="#6e5530"/>
+    <ellipse cx="${ex}" cy="${ey}" rx="3" ry="4.5" fill="#6e5530"/>
   </g>`;
 }
 

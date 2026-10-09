@@ -85,9 +85,25 @@ const defs = /* svg */ `
     <stop offset="1" stop-color="#000" stop-opacity=".5"/>
   </linearGradient>
   <radialGradient id="vignette" cx=".5" cy=".42" r=".75">
-    <stop offset=".5" stop-color="#000" stop-opacity="0"/>
-    <stop offset=".85" stop-color="#000" stop-opacity=".28"/>
-    <stop offset="1" stop-color="#000" stop-opacity=".6"/>
+    <stop offset=".5" stop-color="#0a1716" stop-opacity="0"/>
+    <stop offset=".85" stop-color="#0a1716" stop-opacity=".3"/>
+    <stop offset="1" stop-color="#0a1716" stop-opacity=".62"/>
+  </radialGradient>
+  <!-- 흔들리는 알전구의 빛 웅덩이와 그 바깥 어둠 (fx 층) -->
+  <radialGradient id="lampPool" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#ffe2a0" stop-opacity=".2"/>
+    <stop offset=".45" stop-color="#ffe2a0" stop-opacity=".06"/>
+    <stop offset="1" stop-color="#ffe2a0" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="lampDark" cx=".5" cy=".5" r=".5">
+    <stop offset=".32" stop-color="#081413" stop-opacity="0"/>
+    <stop offset=".75" stop-color="#081413" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#081413" stop-opacity=".45"/>
+  </radialGradient>
+  <radialGradient id="bulbGlow" cx=".5" cy=".5" r=".5">
+    <stop offset="0" stop-color="#fff4d0" stop-opacity=".9"/>
+    <stop offset=".3" stop-color="#ffd98a" stop-opacity=".35"/>
+    <stop offset="1" stop-color="#ffd98a" stop-opacity="0"/>
   </radialGradient>
   <!-- 천장 형광등 한 점에서 퍼지는 빛 -->
   <radialGradient id="bulb" cx=".5" cy=".12" r=".75">
@@ -116,20 +132,6 @@ const defs = /* svg */ `
   <linearGradient id="rust" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0" stop-color="#5a4128" stop-opacity=".7"/>
     <stop offset="1" stop-color="#5a4128" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="doorLight" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#e8c97a" stop-opacity="0"/>
-    <stop offset=".1" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset=".3" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset=".31" stop-color="#e8c97a" stop-opacity="0"/>
-    <stop offset=".44" stop-color="#e8c97a" stop-opacity="0"/>
-    <stop offset=".45" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset=".54" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset=".55" stop-color="#e8c97a" stop-opacity="0"/>
-    <stop offset=".68" stop-color="#e8c97a" stop-opacity="0"/>
-    <stop offset=".69" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset=".9" stop-color="#e8c97a" stop-opacity=".9"/>
-    <stop offset="1" stop-color="#e8c97a" stop-opacity="0"/>
   </linearGradient>
   <pattern id="pTile" width="18" height="18" patternUnits="userSpaceOnUse">
     <rect width="18" height="18" fill="#7d8079"/>
@@ -193,6 +195,16 @@ const defs = /* svg */ `
     <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="4" seed="5" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="22" xChannelSelector="R" yChannelSelector="G" result="d"/>
     <feGaussianBlur in="d" stdDeviation="1.2"/>
+  </filter>
+  <!-- 벽지 뒤에서 밀어 올린 자국: 모양을 높이로 보고 왼쪽 위 빛으로 음영만 낸다 -->
+  <filter id="bulge" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="3.2" result="h"/>
+    <feDiffuseLighting in="h" surfaceScale="4" diffuseConstant="1" lighting-color="#fff" result="lit">
+      <feDistantLight azimuth="225" elevation="50"/>
+    </feDiffuseLighting>
+    <feColorMatrix in="lit" result="sh" values="0 0 0 0 .2  0 0 0 0 .19  0 0 0 0 .16  -1.6 0 0 0 1.23"/>
+    <feColorMatrix in="lit" result="hi" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 .96  2.4 0 0 0 -1.84"/>
+    <feMerge><feMergeNode in="sh"/><feMergeNode in="hi"/></feMerge>
   </filter>
   <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
   <filter id="soft1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1"/></filter>

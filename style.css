@@ -87,7 +87,24 @@ button {
   position: absolute;
   inset: 0;
 }
-.layer svg { display: block; width: 100%; height: 100%; }
+.layer svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.layer .art { pointer-events: none; }
+.layer .fx * { pointer-events: none; }
+.layer .fx .hs { pointer-events: all; }
+
+/* 살아 있는 방: 흔들리는 전구, 깜빡이는 형광등, 흔들리는 벽지 조각 */
+.fx-swing { transform-box: view-box; animation: swing 5.5s ease-in-out infinite alternate; }
+@keyframes swing { from { transform: rotate(-3.2deg); } to { transform: rotate(3.2deg); } }
+.fx-flicker { opacity: 0; animation: flicker 11s steps(1) infinite; }
+@keyframes flicker {
+  0%, 60%, 62.5%, 65%, 100% { opacity: 0; }
+  61% { opacity: .38; } 63% { opacity: .55; } 64% { opacity: .2; }
+}
+.fx-sway { transform-box: view-box; animation: sway 4.6s ease-in-out infinite alternate; }
+@keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2.6deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .fx-swing, .fx-flicker, .fx-sway { animation: none; }
+}
 .layer.in-from-right { animation: in-right .28s ease-out; }
 .layer.in-from-left  { animation: in-left .28s ease-out; }
 .layer.out-to-left   { animation: out-left .28s ease-out forwards; }

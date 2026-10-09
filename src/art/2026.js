@@ -1,8 +1,9 @@
 // 2026 벽 그림. 흰 실크벽지, 차가운 회색. 화면을 어둡게 누르지 않고 물건과 벽의 낡음으로 음산하게.
 import {
   W, H, FLOOR_Y, shell, mood, moldPatch, waterStain, ceilingLeak, seams, bubble, nailHole,
-  ghostFrame, crack, scribble, tally, jag, pts, rng,
+  ghostFrame, crack, scribble, tally, jag, pts, rng, leakPath,
 } from './common.js';
+import { lamp, motes, fly, drip, doorFeet, breathe, creep, neighborLight } from './fx.js';
 
 /* ================= 벽 A · 현관 ================= */
 
@@ -30,8 +31,7 @@ function door() {
   <rect x="238" y="316" width="9" height="17" rx="3" fill="#7f857f"/>
   <g fill="none" stroke="#8f938f" stroke-width="1.2"><circle cx="246" cy="226" r="2.3"/><circle cx="244" cy="231" r="2.3"/><circle cx="241" cy="236" r="2.3"/><circle cx="238" cy="240" r="2.3"/></g>
   <!-- 문틈으로 새는 복도 불빛. 가운데가 끊겨 있다 — 누가 서 있는 것처럼 -->
-  <rect x="150" y="471" width="100" height="3" fill="url(#doorLight)"/>
-  <ellipse cx="200" cy="481" rx="56" ry="6" fill="#e8c97a" opacity=".1" filter="url(#soft)"/>`;
+  <rect x="150" y="469" width="100" height="6" fill="#0d0c0a"/>`;
 }
 
 function shoeCabinet(f) {
@@ -150,19 +150,36 @@ const HAND = `
   <rect x="-9" y="-24" width="9" height="42" rx="4.5" transform="rotate(-3 -4 0)"/>
   <rect x="2" y="-22" width="9" height="40" rx="4.5" transform="rotate(5 6 0)"/>
   <rect x="12" y="-12" width="8" height="32" rx="4" transform="rotate(14 16 6)"/>
-  <rect x="16" y="24" width="9" height="28" rx="4.5" transform="rotate(-52 20 36)"/>`;
+  <rect x="17" y="6" width="9" height="28" rx="4.5" transform="rotate(42 21 30)"/>`;
 
-// 벽지 안쪽에서 손바닥을 밀어붙인 자국: 볼록한 빛과 그림자, 손끝의 누런 땀자국
-function handprint(x, y, rot, scale, opacity) {
+// 손끝 위치와 바깥쪽 방향 (HAND 좌표 기준)
+const TIPS = [[-20, -13.5, -102], [-5.8, -24, -93], [8.4, -22, -85], [20.4, -11.5, -76], [36, 14, -40]];
+
+// 벽지 안쪽에서 손바닥을 밀어붙인 자국.
+// 손 모양을 높이로 삼아 왼쪽 위 빛으로 음영만 얹는다(벽지 무늬는 그대로 이어짐).
+// 손끝에서 벽지가 당겨진 주름, 누런 손끝 자국, 가운데 손가락 끝은 막 찢어지려 한다.
+function handprint(x, y, rot, scale, strength, split = false) {
+  let creases = '';
+  for (const [tx, ty, deg] of TIPS) {
+    for (const d of [-9, 9]) {
+      const a = ((deg + d) * Math.PI) / 180;
+      const l = 13;
+      const x1 = tx + Math.cos(a) * 6;
+      const y1 = ty + Math.sin(a) * 6;
+      const x2 = tx + Math.cos(a) * l;
+      const y2 = ty + Math.sin(a) * l;
+      creases += `M${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}`;
+    }
+  }
   return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${scale})">
-    <g opacity="${opacity}" filter="url(#soft1)">
-      <g fill="#000" transform="translate(2.6 3)">${HAND}</g>
-      <g fill="#fff" transform="translate(-1.8 -1.8)">${HAND}</g>
-      <g fill="url(#p2026)">${HAND}</g>
+    <g filter="url(#bulge)" opacity="${strength}"><g fill="#000">${HAND}</g></g>
+    <path d="${creases}" stroke="#000" stroke-opacity="${(strength * 0.22).toFixed(2)}" stroke-width=".8" transform="translate(.7 .7)" stroke-linecap="round"/>
+    <path d="${creases}" stroke="#fff" stroke-opacity="${(strength * 0.4).toFixed(2)}" stroke-width=".6" stroke-linecap="round"/>
+    <g fill="#6e5a3a" opacity="${(strength * 0.3).toFixed(2)}" filter="url(#soft1)">
+      ${TIPS.slice(0, 4).map(([tx, ty]) => `<ellipse cx="${tx}" cy="${ty + 3}" rx="3.4" ry="3.8"/>`).join('')}
     </g>
-    <g fill="#6e5a3a" opacity="${opacity * 0.7}" filter="url(#soft1)">
-      <ellipse cx="-17" cy="-10" rx="3.5" ry="4"/><ellipse cx="-5" cy="-20" rx="3.5" ry="4"/><ellipse cx="7" cy="-18" rx="3.5" ry="4"/><ellipse cx="17" cy="-8" rx="3" ry="3.5"/>
-    </g>
+    ${split ? `<path d="M-6.6 -27.5q.9 3 .4 6.5q-.9 -3 -.4 -6.5z" fill="#1c120e"/>
+      <path d="M-6.4 -26l-2 -1M-5.7 -24l2 -.6M-6.2 -22.6l-2 .8" stroke="#f6f3ec" stroke-width=".4"/>` : ''}
   </g>`;
 }
 
@@ -193,8 +210,8 @@ function wallB(f) {
   ${waterStain(150, 70, 66, 30)}
   ${ceilingLeak(118, 92, 3)}
   ${waterStain(250, 330, 30, 22)}
-  ${handprint(76, 172, -8, 1.15, 0.42)}
-  ${handprint(44, 268, 18, 0.9, 0.24)}
+  ${handprint(78, 176, -8, 1.2, 0.95, true)}
+  ${handprint(42, 272, 18, 0.9, 0.55)}
   ${bubble(214, 214, 16, 11)}
   ${bubble(236, 236, 8, 6)}
   ${nailHole(166, 252, 34)}
@@ -231,14 +248,6 @@ function wallB(f) {
     <path d="M386 214c1 50 -2 110 1 160" stroke="url(#drip)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
     <path d="M338 258c2 30 -3 60 0 100s2 40 1 62" stroke="url(#drip)" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".8"/>
     <ellipse cx="380" cy="${FLOOR_Y - 8}" rx="14" ry="4" fill="#3f2219" opacity=".6" filter="url(#soft1)"/>
-  </g>
-
-  <!-- 뜯겨 말려 늘어진 실크 조각 -->
-  <g>
-    <path d="M300 244c4 22 12 44 30 58c12 8 26 4 26 -8c0 -14 -14 -22 -24 -34z" fill="#000" opacity=".35" filter="url(#soft)" transform="translate(-4 6)"/>
-    <path d="M296 232c2 26 12 52 32 66c12 8 26 2 24 -10c-2 -14 -14 -24 -22 -40c-6 -10 -20 -16 -34 -16z" fill="url(#flapBack)"/>
-    <path d="M318 290c10 8 22 10 30 4" stroke="#7d786f" stroke-width="1" fill="none"/>
-    ${fibers(jag([[296, 232], [330, 248]], 1.5, 9, 4), 10)}
   </g>
 
   ${f.cornerWet ? `<ellipse cx="326" cy="166" rx="74" ry="118" fill="#55544d" opacity=".32" filter="url(#soft)"/>
@@ -396,10 +405,47 @@ function wallD(f) {
   ${mood(1)}`;
 }
 
+/* ================= 움직이는 층 ================= */
+
+const leakA = leakPath(330, 130, 5);
+const leakB = leakPath(118, 92, 3);
+const leakD = leakPath(96, 100, 11);
+
+const fxWall = {
+  A: () => `
+    ${drip(leakA.ex, leakA.ey + 4, 300, { dur: 5.5, color: '#8a7a55' })}
+    ${fly('M64 140C94 118 116 182 82 212S40 262 72 300', 17)}`,
+  B: () => `
+    <g class="fx-sway" style="transform-origin:300px 236px">
+  <!-- 뜯겨 말려 늘어진 실크 조각 -->
+  <g>
+    <path d="M300 244c4 22 12 44 30 58c12 8 26 4 26 -8c0 -14 -14 -22 -24 -34z" fill="#000" opacity=".35" filter="url(#soft)" transform="translate(-4 6)"/>
+    <path d="M296 232c2 26 12 52 32 66c12 8 26 2 24 -10c-2 -14 -14 -24 -22 -40c-6 -10 -20 -16 -34 -16z" fill="url(#flapBack)"/>
+    <path d="M318 290c10 8 22 10 30 4" stroke="#7d786f" stroke-width="1" fill="none"/>
+    ${fibers(jag([[296, 232], [330, 248]], 1.5, 9, 4), 10)}
+  </g>
+
+    </g>
+    ${breathe(208, 208, 10, 6, 5)}
+    ${breathe(233, 233, 5, 3, 3.6)}
+    ${creep('M378 204c-3 40 2 80 -1 120s3 90 1 142', 31)}
+    ${drip(leakB.ex, leakB.ey + 4, 260, { dur: 6.5, begin: 1.2, color: '#8a7a55' })}
+    ${fly('M252 384C272 352 302 362 292 332S252 300 272 280', 19, 3)}`,
+  C: () => `
+    ${neighborLight(226, 98, 24, 32)}
+    ${fly('M332 300C352 332 322 360 346 390S372 412 352 440', 15, 5)}`,
+  D: () => `
+    ${drip(170, 274, 13, { dur: 2.8 })}
+    ${drip(leakD.ex, leakD.ey + 4, 0.1, { dur: 7, color: '#8a7a55' })}
+    ${fly('M240 120C236 160 248 200 240 246', 14, 2)}`,
+};
+
 export function draw2026(wall, state) {
   const f = state.flags;
-  let svg = { A: wallA, B: wallB, C: wallC, D: wallD }[wall](f);
-  // 정전: 2단계에서 손전등 원형 마스크로 바뀐다
-  if (f.blackout) svg += `<rect width="${W}" height="${H}" fill="#000" opacity=".82"/>`;
-  return svg;
+  const art = { A: wallA, B: wallB, C: wallC, D: wallD }[wall](f);
+  let fx = `${lamp({ off: f.blackout })}${f.blackout ? '' : motes(wall.charCodeAt(0))}${fxWall[wall]()}`;
+  // 정전: 2단계에서 손전등 원형 마스크로 바뀐다. 현관 문틈 불빛만은 꺼지지 않는다
+  if (f.blackout) fx += `<rect width="${W}" height="${H}" fill="#000" opacity=".82"/>${wall === 'A' ? doorFeet() : ''}`;
+  else if (wall === 'A') fx += doorFeet();
+  return { art, fx };
 }

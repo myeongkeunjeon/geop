@@ -4,21 +4,24 @@ import { ui } from './data/text.js';
 import { hotspotsFor } from './data/rooms.js';
 import { draw2026 } from './art/2026.js';
 import { W, H, shell, mood, wallTag } from './art/common.js';
+import { lamp } from './art/fx.js';
 
 const drawers = { 2026: draw2026 };
 
 const layers = document.getElementById('layers');
 const sceneEl = document.getElementById('scene');
 
+// 정지 그림(art)과 움직이는 층(fx + 핫스팟)을 두 장의 SVG로
 function svgFor(era, wall) {
   const draw = drawers[era];
-  const art = draw
+  const { art, fx } = draw
     ? draw(wall, state)
-    : `${shell(era, { cornerRight: wall === 'B' })}${wallTag(`${ui.eraNames[era]} · 벽 ${wall} (준비 중)`)}${mood(1)}`;
+    : { art: `${shell(era, { cornerRight: wall === 'B' })}${wallTag(`${ui.eraNames[era]} · 벽 ${wall} (준비 중)`)}${mood(1)}`, fx: lamp() };
   const hs = hotspotsFor(era, wall, state.flags)
     .map((h) => `<rect class="hs" data-hs="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}"/>`)
     .join('');
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">${art}${hs}</svg>`;
+  const open = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"`;
+  return `${open} class="art">${art}</svg>${open} class="fx">${fx}${hs}</svg>`;
 }
 
 // anim: 'next' | 'prev' | 'fade' | undefined(즉시)

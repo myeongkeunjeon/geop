@@ -81,6 +81,41 @@ export const actions = [
     { target: 'fridge', text: 'fridge14' },
   ]),
 
+  ...era('1995', [
+    // 현관
+    { target: 'door', use: 'drawing', text: 'drawing_too_early' },
+    { target: 'door', text: 'door95' },
+    { target: 'shoes', text: 'shoes95' },
+    { target: 'umbrella', text: 'umbrella95' },
+
+    // 귀퉁이: 벽시계, 자개장, 체크 비닐
+    { target: 'clock', forbids: ['gotKey'], text: 'clock95', then: 'clock' },
+    { target: 'clock', text: 'clock95_after' },
+    { target: 'cabinet', use: 'key', forbids: ['cabinetOpen'], text: 'cabinet_key', then: 'crane' },
+    { target: 'cabinet', forbids: ['cabinetOpen'], text: 'cabinet_locked' },
+    { target: 'cabinet', text: 'cabinet_after' },
+    { target: 'check', use: 'spray', forbids: ['scored'], text: 'beads' },
+    { target: 'check', use: 'cutter', forbids: ['scored'], text: 'score_start', then: 'score' },
+    { target: 'check', use: 'spray', requires: ['scored'], forbids: ['peel_1995', 'peeled_1995'], sets: ['check95Wet'], text: 'vinyl_wet', then: 'peel' },
+    { target: 'check', use: 'hera', text: 'hera95' },
+    { target: 'check', requires: ['scored'], text: 'check_scored' },
+    { target: 'check', text: 'check_look' },
+    { target: 'corner', use: 'spray', text: 'beads' },
+    { target: 'corner', then: 'strip' },
+
+    // 창문: 결혼사진, TV, 빈 반지함
+    { target: 'ringbox', use: 'ring', requires: ['reachedBare'], takes: ['ring'], places: 'ring', text: 'ring_placed', then: 'placed' },
+    { target: 'ringbox', use: 'ring', forbids: ['reachedBare'], sets: ['triedRingEarly'], text: 'ring_too_early', then: 'early' },
+    { target: 'ringbox', text: 'ringbox95' },
+    { target: 'photo', text: 'photo95' },
+    { target: 'tv', text: 'tv95' },
+    { target: 'window', text: 'window95' },
+
+    // 부엌
+    { target: 'cupboard', text: 'cupboard95' },
+    { target: 'stove', text: 'stove95' },
+  ]),
+
   // 아직 그리지 않은 시대: 귀퉁이를 누르면 시대 이동 띠
-  ...['1995', '1974', 'bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
+  ...['1974', 'bare'].flatMap((e) => era(e, [{ target: 'corner', then: 'strip' }])),
 ];

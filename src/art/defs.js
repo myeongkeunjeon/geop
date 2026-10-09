@@ -246,6 +246,35 @@ const defs = /* svg */ `
   <pattern id="grille" width="4" height="4" patternUnits="userSpaceOnUse">
     <rect width="4" height="4" fill="#3a3a3c"/><circle cx="2" cy="2" r=".9" fill="#151516"/>
   </pattern>
+  <!-- 1995 -->
+  <linearGradient id="lacquer" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#140d0b"/>
+    <stop offset=".45" stop-color="#2a1915"/>
+    <stop offset="1" stop-color="#120b09"/>
+  </linearGradient>
+  <linearGradient id="pearl" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#f4f0ff"/>
+    <stop offset=".3" stop-color="#bfe7e0"/>
+    <stop offset=".55" stop-color="#f6d3e6"/>
+    <stop offset=".8" stop-color="#cfe0ff"/>
+    <stop offset="1" stop-color="#f4f0ff"/>
+  </linearGradient>
+  <radialGradient id="clockFace" cx=".45" cy=".4" r=".6">
+    <stop offset="0" stop-color="#f3ead2"/>
+    <stop offset="1" stop-color="#c9b98f"/>
+  </radialGradient>
+  <radialGradient id="crt" cx=".45" cy=".4" r=".7">
+    <stop offset="0" stop-color="#5c6a68"/>
+    <stop offset="1" stop-color="#1b2120"/>
+  </radialGradient>
+  <linearGradient id="flapBack95" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#cfc6b2"/>
+    <stop offset=".6" stop-color="#9b917c"/>
+    <stop offset="1" stop-color="#5f574a"/>
+  </linearGradient>
+  <pattern id="pNoise" width="6" height="4" patternUnits="userSpaceOnUse">
+    <rect width="6" height="4" fill="#8a9593"/><rect width="2" height="1" fill="#e1e8e6"/><rect x="3" y="2" width="2" height="1" fill="#2b3231"/><rect x="1" y="3" width="1" height="1" fill="#d0d7d5"/>
+  </pattern>
   <!-- 필름 입자 -->
   <filter id="grain" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>

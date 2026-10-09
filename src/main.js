@@ -10,7 +10,10 @@ import { initPeel } from './peel.js';
 import { peelArt2026 } from './art/2026.js';
 import { peelArt2014 } from './art/2014.js';
 import { openStrip } from './strip.js';
-import { openRadio, openLock } from './puzzles/dial.js';
+import { openRadio, openLock, openClock } from './puzzles/dial.js';
+import { openCrane } from './puzzles/crane.js';
+import { openScore } from './puzzles/score.js';
+import { peelArt1995 } from './art/1995.js';
 import { initDebug } from './debug.js';
 
 const $ = (id) => document.getElementById(id);
@@ -234,6 +237,48 @@ const events = {
     save();
   },
   placed() {},
+  // 1995 벽시계: 2시 13분 → 자개장 열쇠
+  clock() {
+    openClock({
+      target: [2, 13],
+      onSolved() {
+        setFlag('gotKey');
+        state.stats.solved.P7 ??= Date.now();
+        addItem('key');
+        save();
+        renderScene();
+        flyToBag('clock', ['key']);
+        say(lines.clock_open);
+      },
+    });
+  },
+  // 1995 자개장 학 문양 → 밀가루, 성냥, 숨은 귀퉁이
+  crane() {
+    openCrane({
+      onSolved() {
+        setFlag('cabinetOpen');
+        state.stats.solved.P8 ??= Date.now();
+        const gained = ['flour', 'matches'].filter((id) => !state.inventory.includes(id));
+        gained.forEach(addItem);
+        save();
+        play('drop');
+        renderScene();
+        flyToBag('cabinet', gained);
+        say(lines.cabinet_open);
+      },
+    });
+  },
+  // 1995 비닐 칼집
+  score() {
+    openScore({
+      onDone() {
+        setFlag('scored');
+        save();
+        renderScene();
+        say(lines.scored);
+      },
+    });
+  },
 };
 
 const NEXT = { 2026: '2014', 2014: '1995', 1995: '1974', 1974: 'bare' };
@@ -267,6 +312,7 @@ function travel(era) {
 const peelCfg = {
   2026: { r0: 112, speed: 1.1, curl: 'url(#flapBack)', sound: 'tear', ...peelArt2026 },
   2014: peelArt2014,
+  1995: peelArt1995,
 };
 initPeel({
   current: () => (state.wall === 'B' && flag(`peel_${state.era}`) && peelCfg[state.era] ? { era: state.era, ...peelCfg[state.era] } : null),

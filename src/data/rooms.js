@@ -65,10 +65,43 @@ export const rooms = {
       ],
     },
   },
+  1995: {
+    A: {
+      hotspots: [
+        { id: 'door', label: '현관문', x: 150, y: 110, w: 100, h: 356 },
+        { id: 'shoes', label: '신발장', x: 18, y: 250, w: 118, h: 226 },
+        { id: 'umbrella', label: '우산꽂이', x: 270, y: 326, w: 64, h: 150 },
+      ],
+    },
+    B: {
+      hotspots: [
+        // 귀퉁이 윗부분은 자개장 위로 늘 보인다 (시대 이동)
+        { id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 100 },
+        { id: 'clock', label: '벽시계', x: 34, y: 76, w: 88, h: 176 },
+        { id: 'cabinet', label: '자개장', x: 208, y: 150, w: 178, h: 326, hideIf: 'cabinetOpen' },
+        { id: 'cabinet', label: '자개장', x: 146, y: 150, w: 152, h: 326, showIf: 'cabinetOpen' },
+        { id: 'check', label: '드러난 귀퉁이', x: 300, y: 300, w: 90, h: 176, showIf: 'cabinetOpen' },
+      ],
+    },
+    C: {
+      hotspots: [
+        { id: 'window', label: '창문', x: 110, y: 70, w: 170, h: 170 },
+        { id: 'photo', label: '결혼사진', x: 270, y: 260, w: 82, h: 100 },
+        { id: 'tv', label: 'TV', x: 50, y: 270, w: 130, h: 130 },
+        { id: 'ringbox', label: '반지함', x: 196, y: 366, w: 46, h: 36 },
+      ],
+    },
+    D: {
+      hotspots: [
+        { id: 'cupboard', label: '찬장', x: 30, y: 110, w: 180, h: 186 },
+        { id: 'stove', label: '곤로', x: 244, y: 360, w: 92, h: 116 },
+      ],
+    },
+  },
 };
 
 // 아직 그리지 않은 시대: 벽 B 귀퉁이만 있어 시대 이동 띠로 돌아갈 수 있다
-for (const era of ['1995', '1974', 'bare']) {
+for (const era of ['1974', 'bare']) {
   rooms[era] ??= { B: { hotspots: [{ id: 'corner', label: '귀퉁이', x: 278, y: 44, w: 112, h: 236 }] } };
 }
 

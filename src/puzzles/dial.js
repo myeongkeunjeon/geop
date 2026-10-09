@@ -131,3 +131,93 @@ export function openLock({ code, onOpen, onWrong, wrongText }) {
     }
   });
 }
+
+/* ---------------- 벽시계 맞추기: 시침·분침을 돌린다 (분침 1분 단위) ---------------- */
+
+export function openClock({ target: [th, tm], onSolved }) {
+  let h = 7;
+  let m = 40;
+  const nums = Array.from({ length: 12 }, (_, i) => {
+    const a = ((i + 1) / 12) * Math.PI * 2;
+    return `<text x="${100 + Math.sin(a) * 70}" y="${105 + -Math.cos(a) * 70}" text-anchor="middle">${i + 1}</text>`;
+  }).join('');
+  const root = openOverlay(
+    `<div class="clock">
+      <svg class="clock-face" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="98" fill="#6b4529"/>
+        <circle cx="100" cy="100" r="88" fill="url(#clockFace)"/>
+        <g font-family="Gowun Batang, serif" font-size="15" fill="#3a2a1a">${nums}</g>
+        <path class="hand-h" d="M100 100V56" stroke="#1a120b" stroke-width="6" stroke-linecap="round"/>
+        <path class="hand-m" d="M100 100V30" stroke="#1a120b" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="5" fill="#b8913c"/>
+      </svg>
+      <div class="clock-buttons">
+        <div><span>시침</span><button data-h="-1">◀</button><button data-h="1">▶</button></div>
+        <div><span>분침</span><button data-m="-1">◀</button><button data-m="1">▶</button></div>
+      </div>
+      <p class="pz-hint">버튼을 누르고 있으면 계속 돈다 · 분침은 시계판을 끌어도 된다</p>
+    </div>`,
+    { cls: 'pz-clock', closed: () => clearInterval(hold) },
+  );
+  let done = false;
+  let hold = 0;
+  function draw() {
+    root.querySelector('.hand-h').setAttribute('transform', `rotate(${((h % 12) + m / 60) * 30} 100 100)`);
+    root.querySelector('.hand-m').setAttribute('transform', `rotate(${m * 6} 100 100)`);
+    if (!done && h % 12 === th % 12 && m === tm) {
+      done = true;
+      clearInterval(hold);
+      play('chime');
+      vibrate(20);
+      root.querySelector('.clock-face').classList.add('solved');
+      setTimeout(() => {
+        closeOverlay();
+        onSolved();
+      }, 1200);
+    }
+  }
+  function step(b) {
+    if (done) return;
+    if (b.dataset.h) h = (h + Number(b.dataset.h) + 12) % 12;
+    if (b.dataset.m) {
+      m += Number(b.dataset.m);
+      if (m >= 60) (m = 0), (h = (h + 1) % 12);
+      if (m < 0) (m = 59), (h = (h + 11) % 12);
+    }
+    play('dial');
+    draw();
+  }
+  const btns = root.querySelector('.clock-buttons');
+  btns.addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    step(b);
+    clearInterval(hold);
+    let n = 0;
+    hold = setInterval(() => n++ > 3 && step(b), 90);
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) btns.addEventListener(ev, () => clearInterval(hold));
+
+  // 시계판을 끌면 분침이 손가락 쪽을 가리킨다
+  const face = root.querySelector('.clock-face');
+  let dragging = false;
+  const aim = (e) => {
+    const r = face.getBoundingClientRect();
+    const a = Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2)));
+    const nm = Math.round((((a * 180) / Math.PI + 360) % 360) / 6) % 60;
+    if (nm === m || done) return;
+    if (m > 45 && nm < 15) h = (h + 1) % 12;
+    if (m < 15 && nm > 45) h = (h + 11) % 12;
+    m = nm;
+    play('dial');
+    draw();
+  };
+  face.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    face.setPointerCapture(e.pointerId);
+    aim(e);
+  });
+  face.addEventListener('pointermove', (e) => dragging && aim(e));
+  face.addEventListener('pointerup', () => (dragging = false));
+  draw();
+}

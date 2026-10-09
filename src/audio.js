@@ -76,6 +76,16 @@ const sounds = {
     burst({ dur: 0.18, type: 'lowpass', freq: 500, gain: 0.2, at: 0.12 });
   },
   dial: () => tone(2400, 0.015, { gain: 0.04, type: 'square' }),
+  // 비닐: 칼집 따라 바삭하게
+  tearVinyl: () => burst({ dur: 0.06 + Math.random() * 0.05, type: 'highpass', freq: 1400 + Math.random() * 900, q: 1.2, gain: 0.24 }),
+  // 커터칼 칼집: 쓱
+  cut: () => burst({ dur: 0.22, type: 'bandpass', freq: 2600, freqTo: 4200, q: 2, gain: 0.22, attack: 0.02 }),
+  // 시계·학: 맑은 종소리
+  chime: () => {
+    tone(880, 1.2, { gain: 0.06 });
+    tone(1320, 1.4, { gain: 0.04, at: 0.18 });
+    tone(660, 1.6, { gain: 0.05, at: 0.36 });
+  },
   // 조각이 떨어짐
   drop: () => {
     tone(110, 0.35, { gain: 0.25, to: 38 });

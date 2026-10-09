@@ -8,9 +8,9 @@ import { backTransform } from './art/room.js';
 import { play, vibrate } from './audio.js';
 import { aimTorch, widenTorch } from './torch.js';
 
-const C = [392, 156]; // 뜯기는 중심: 벽 B 오른쪽 모서리의 찢긴 자리 (벽 좌표)
+let C = [392, 156]; // 뜯기는 중심: 벽 B 오른쪽 모서리의 찢긴 자리 (벽 좌표, 재질마다 다를 수 있음)
 let R0 = 112; // 처음 구멍 크기 (재질마다 다름)
-const RF = 505; // 벽 전체가 드러나는 크기
+let RF = 505; // 벽 전체가 드러나는 크기
 const N = 120;
 const jit = (() => {
   const r = rng(77);
@@ -21,7 +21,7 @@ const jit = (() => {
 })();
 
 // opts: { current() → 지금 뜯을 수 있는 벽의 설정 또는 null, onDone(era) }
-// 설정: { era, under(), front(), speed, curl, sound, r0 }
+// 설정: { era, under(), front(), speed, curl, sound, r0, center?, rf?, hs? }
 let opts = null;
 let cfg = null;
 let r = R0;
@@ -60,6 +60,8 @@ function draw() {
 export function mountPeel(layer) {
   cfg = opts?.current();
   if (!cfg) return;
+  C = cfg.center || [392, 156];
+  RF = cfg.rf || 505;
   if (R0 !== cfg.r0) r = R0 = cfg.r0;
   const art = layer.querySelector(':scope > .art');
   if (!art || layer.querySelector(':scope > .peel')) return;
@@ -143,7 +145,7 @@ function finish() {
 // scene.js가 pointerdown마다 묻는다: 이 손가락을 뜯기가 가져갈까?
 export function capturePeel(e) {
   if (!el || busy || !opts?.current()) return false;
-  if (!e.target.closest?.('[data-hs="corner"]')) {
+  if (!e.target.closest?.(`[data-hs="${cfg?.hs || 'corner'}"]`)) {
     const p = local(e);
     if (!p || Math.hypot(p.x - C[0], p.y - C[1]) > r + 40) return false;
   }

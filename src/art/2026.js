@@ -499,6 +499,7 @@ export function draw2026(wall, state) {
     fx: fxWall[wall](f),
     after: wall === 'A' ? doorFeet() : '', // 현관 문틈 불빛은 정전에도 꺼지지 않는다
     dark: !!f.blackout,
+    torch: !!f.torchOn,
   };
 }
 

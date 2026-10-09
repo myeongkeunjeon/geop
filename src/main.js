@@ -5,7 +5,7 @@ import { itemIcon } from './art/items.js';
 import { renderScene, bindScene, hotspotEl } from './scene.js';
 import { act } from './interact.js';
 import { unlockAudio, play } from './audio.js';
-import { aimTorchAt } from './torch.js';
+import { aimTorchAt, switchOn } from './torch.js';
 import { initPeel } from './peel.js';
 import { peelArt2026 } from './art/2026.js';
 import { initDebug } from './debug.js';
@@ -157,6 +157,7 @@ function flyToBag(hotspotId, gained) {
 /* ---------- 이벤트 (actions.js의 then) ---------- */
 const events = {
   // 정전: 불이 꺼지고 손전등 빛만. 빛이 귀퉁이를 비추면, 귀퉁이가 한 번 숨 쉰다
+  // 정전: 완전히 깜깜해진다. 손전등을 켜야 보인다
   blackout() {
     setTimeout(() => {
       setFlag('blackout');
@@ -165,16 +166,7 @@ const events = {
       renderTop();
       renderScene('fade');
       say(lines.blackout);
-      aimTorchAt(43 + 0.78 * 330, 58 + 0.78 * 160);
-      setTimeout(() => {
-        document.querySelector('.layer:not(.leaving) .corner-breath')?.classList.add('go');
-        play('inhale');
-        setTimeout(() => say(lines.corner_breath), 900);
-        setTimeout(() => {
-          setFlag('breathed');
-          save();
-        }, 2800);
-      }, 2200);
+      setTimeout(() => !flag('torchOn') && say(lines.blackout_hint), 2600);
     }, 1400);
   },
   fillWater() {
@@ -212,25 +204,88 @@ initPeel({
 });
 
 /* ---------- 장면 조작 ---------- */
-function onHotspot(id) {
-  const use = selected;
-  const res = act(id, use);
-  if (use) selected = null;
-  say(res.text ? lines[res.text] : '');
+const isDark = () => state.era === '2026' && flag('blackout') && !flag('torchOn');
+
+// 손전등 켜기: 손전등을 고르고 화면을 탭하면 그 자리에서 딸깍
+function turnOnTorch(e) {
+  selected = null;
+  setFlag('torchOn');
   save();
-  if (res.gained.length) {
-    renderScene();
-    flyToBag(id, res.gained);
-  } else {
-    renderScene();
-    renderBag();
+  play('click');
+  renderScene();
+  renderBag();
+  switchOn(e.clientX, e.clientY);
+  say(lines.torch_on);
+  setTimeout(maybeBreathe, 1300);
+}
+
+// 빛이 처음 벽 B에 닿으면, 귀퉁이가 한 번 숨 쉰다
+function maybeBreathe() {
+  if (state.era !== '2026' || state.wall !== 'B' || !flag('torchOn') || flag('breathed')) return;
+  aimTorchAt(43 + 0.78 * 330, 58 + 0.78 * 160);
+  setTimeout(() => {
+    document.querySelector('.layer:not(.leaving) .corner-breath')?.classList.add('go');
+    play('inhale');
+    setTimeout(() => say(lines.corner_breath), 900);
+    setTimeout(() => {
+      setFlag('breathed');
+      save();
+    }, 2800);
+  }, 1100);
+}
+
+// 아이템을 쓰는 모션: 소지품 칸에서 대상 물건으로 날아가 닿는다
+function useFly(itemId, hotspotId, done) {
+  const slot = slotsEl.querySelector(`[data-item="${itemId}"]`)?.getBoundingClientRect();
+  const to = hotspotEl(hotspotId)?.getBoundingClientRect();
+  if (!slot || !to) return done();
+  const fly = document.createElement('div');
+  fly.className = 'fly use';
+  fly.innerHTML = itemIcon(itemId);
+  Object.assign(fly.style, { left: `${slot.left}px`, top: `${slot.top}px`, width: `${slot.width}px`, height: `${slot.height}px` });
+  document.body.append(fly);
+  const dx = to.left + to.width / 2 - (slot.left + slot.width / 2);
+  const dy = to.top + to.height / 2 - (slot.top + slot.height / 2);
+  requestAnimationFrame(() => {
+    fly.style.transform = `translate(${dx}px, ${dy}px) scale(1.25) rotate(-12deg)`;
+  });
+  setTimeout(() => {
+    fly.style.opacity = '0';
+    done();
+  }, 420);
+  setTimeout(() => fly.remove(), 800);
+}
+
+function onHotspot(id, e) {
+  const use = selected;
+  if (use === 'flashlight' && isDark()) return turnOnTorch(e);
+  if (isDark()) {
+    say(lines.too_dark);
+    return;
   }
-  if (res.then) events[res.then]?.();
+  const res = act(id, use);
+  save();
+  const show = () => {
+    say(res.text ? lines[res.text] : '');
+    if (res.gained.length) {
+      renderScene();
+      flyToBag(id, res.gained);
+    } else {
+      renderScene();
+      renderBag();
+    }
+    if (res.then) events[res.then]?.();
+  };
+  if (use) {
+    selected = null;
+    useFly(use, id, show);
+  } else show();
 }
 
 bindScene({
   onHotspot,
-  onEmpty() {
+  onEmpty(e) {
+    if (selected === 'flashlight' && isDark()) return turnOnTorch(e);
     if (selected) {
       selected = null;
       renderBag();
@@ -240,6 +295,7 @@ bindScene({
     turn(dir);
     save();
     renderScene(dir > 0 ? 'next' : 'prev');
+    setTimeout(maybeBreathe, 600);
   },
 });
 

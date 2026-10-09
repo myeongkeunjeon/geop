@@ -53,7 +53,7 @@ export function initDebug(api) {
     section('2026 상태',
       btn(`정전 ${state.flags.blackout ? '끄기' : '켜기'}`, () => (state.flags.blackout ? (delete state.flags.blackout) : Object.assign(state.flags, { blackout: true, boxOpen: true, breathed: true }))),
       btn('뜯기 준비', () => {
-        Object.assign(state.flags, { blackout: true, boxOpen: true, breathed: true, cornerWet: true, peelReady: true });
+        Object.assign(state.flags, { blackout: true, torchOn: true, boxOpen: true, breathed: true, cornerWet: true, peelReady: true });
         state.era = '2026';
         state.wall = 'B';
       }));

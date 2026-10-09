@@ -18,15 +18,16 @@ const sceneEl = document.getElementById('scene');
 //          → 움직이는 층 (fx) → 핫스팟 (hit)
 function partsFor(era, wall) {
   const draw = drawers[era];
-  const { art, fx = '', after = '', dark = false } = draw
+  const { art, fx = '', after = '', dark = false, torch = false } = draw
     ? draw(wall, state)
     : { art: `${shell(era)}${wallTag(`${ui.eraNames[era]} · 벽 ${wall} (준비 중)`)}` };
   const hs = hotspotsFor(era, wall, state.flags)
     .map((h) => `<rect class="hs" data-hs="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}"/>`)
     .join('');
   const open = (cls) => `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" class="${cls}">`;
-  // 정전: 화면은 거의 검고 손전등 빛만 남는다
-  const top = dark ? torchSvg() : `${lamp()}${motes(wall.charCodeAt(0))}`;
+  // 정전: 손전등을 켜기 전엔 완전히 깜깜하고, 켜면 둥근 빛만 남는다
+  const black = `<rect width="${W}" height="${H}" fill="#010203" opacity=".985"/>`;
+  const top = dark ? (torch ? torchSvg() : black) : `${lamp()}${motes(wall.charCodeAt(0))}`;
   return {
     art: `${open('art')}${roomShell(era)}<g transform="${backTransform}">${art}</g>${roomFront()}</svg>`,
     fx: `${open('fx')}<g class="wall-fx" transform="${backTransform}">${fx}</g>${top}<g transform="${backTransform}">${after}</g></svg>`,

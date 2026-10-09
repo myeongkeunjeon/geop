@@ -32,6 +32,28 @@ function step() {
   raf = moving ? requestAnimationFrame(step) : 0;
 }
 
+// 손전등을 켤 때: 손가락 자리에서 몇 번 깜빡이다 켜진다
+export function switchOn(clientX, clientY) {
+  const svg = document.querySelector('.layer:not(.leaving) .fx');
+  const m = svg?.getScreenCTM?.();
+  if (m) {
+    const p = new DOMPoint(clientX, clientY).matrixTransform(m.inverse());
+    pos.x = target.x = p.x;
+    pos.y = target.y = p.y;
+  }
+  const seq = [0, 60, 0, 0, 92, 20, 92];
+  seq.forEach((v, i) =>
+    setTimeout(() => {
+      R = v;
+      for (const el of document.querySelectorAll('.torch-c')) {
+        el.setAttribute('cx', pos.x.toFixed(1));
+        el.setAttribute('cy', pos.y.toFixed(1));
+        el.setAttribute('r', v);
+      }
+    }, i * 75),
+  );
+}
+
 // 벽지를 뜯는 동안은 빛을 넓게: 손맛이 보이도록
 export function widenTorch(on) {
   targetR = on ? 165 : 92;

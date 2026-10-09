@@ -75,6 +75,11 @@ const sounds = {
     tone(70, 0.18, { gain: 0.3, type: 'square', to: 40 });
     burst({ dur: 0.25, type: 'lowpass', freq: 400, gain: 0.3 });
   },
+  // 손전등 스위치: 딸깍
+  click: () => {
+    tone(1800, 0.02, { gain: 0.12, type: 'square' });
+    burst({ dur: 0.03, type: 'highpass', freq: 3000, gain: 0.2 });
+  },
   // 수돗물 받는 소리
   water: () => {
     burst({ dur: 1.3, type: 'bandpass', freq: 900, freqTo: 1500, q: 1.5, gain: 0.12, attack: 0.1 });

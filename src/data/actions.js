@@ -27,6 +27,7 @@ export const actions = [
     { target: 'box', text: 'box_empty' },
     { target: 'corner', use: 'cutter', forbids: ['cornerWet'], text: 'wont_budge' },
     { target: 'corner', use: 'spray', requires: ['blackout'], forbids: ['cornerWet'], sets: ['cornerWet'], text: 'corner_wet', then: 'spray' },
+    { target: 'corner', use: 'spray', forbids: ['blackout'], text: 'corner_spray_early', then: 'spray' },
     { target: 'corner', use: 'cutter', requires: ['cornerWet'], forbids: ['peelReady'], text: 'corner_lift', then: 'peel' },
     { target: 'corner', requires: ['cornerWet'], text: 'corner_wet_look' },
     { target: 'corner', requires: ['blackout'], text: 'corner_look_dark' },
@@ -41,9 +42,8 @@ export const actions = [
 
     // 부엌
     { target: 'fridge', text: 'fridge' },
-    { target: 'sink', use: 'flashlight', requires: ['blackout'], forbids: ['gotSpray'], gives: ['spray'], sets: ['gotSpray'], text: 'sink_spray', then: 'fillWater', solve: 'P2' },
-    { target: 'sink', requires: ['gotSpray'], text: 'sink_after' },
-    { target: 'sink', requires: ['blackout'], text: 'sink_dark2' },
-    { target: 'sink', text: 'sink_dark' },
+    // 분무기는 정전과 상관없이 얻는다
+    { target: 'sink', forbids: ['gotSpray'], gives: ['spray'], sets: ['gotSpray'], text: 'sink_spray', then: 'fillWater', solve: 'P2' },
+    { target: 'sink', text: 'sink_after' },
   ]),
 ];
